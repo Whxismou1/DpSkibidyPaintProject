@@ -6,7 +6,9 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.Pane?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skibidypaintproject.Controllers.RegisterController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0"
+    xmlns="http://javafx.com/javafx/23.0.1"
+    xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skibidypaintproject.Controllers.RegisterController">
     <children>
 
         <Label layoutX="197.0" layoutY="102.0" text="User" />
@@ -19,6 +21,6 @@
         <PasswordField fx:id="confirmPasswordInput" layoutX="240.0" layoutY="209.0" />
 
         <Button fx:id="registerButton" layoutX="284.0" layoutY="276.0" mnemonicParsing="false" onAction="#register" text="Register" />
-        <Button fx:id="backButton" layoutX="293.0" layoutY="322.0" mnemonicParsing="false" onAction="#backToLogin" text="Back" />
+        <Button fx:id="backButton" layoutX="293.0" layoutY="322.0" mnemonicParsing="false" onAction="#backToLogin" text="Login" />
     </children>
 </Pane>
