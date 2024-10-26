@@ -6,16 +6,16 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.Pane?>
 
-
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" fx:controller="com.skibidypaintproject.Controllers.LoginController"
-    xmlns="http://javafx.com/javafx/23"
-    xmlns:fx="http://javafx.com/fxml/1">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skibidypaintproject.Controllers.LoginController">
     <children>
-        <Button fx:id="loginButton" layoutX="269.0" layoutY="279.0" mnemonicParsing="false" text="Login" onAction="#login"/>
+        <Button fx:id="loginButton" layoutX="291.0" layoutY="279.0" mnemonicParsing="false" onAction="#login" text="Login" />
         <!-- <Button fx:id="registerButton" layoutX="269.0" layoutY="279.0" mnemonicParsing="false" text="SignUp"/> -->
-        <TextField fx:id="usernameTextInput" layoutX="215.0" layoutY="132.0" />
-        <PasswordField fx:id="passwordInput" layoutX="215.0" layoutY="188.0" />
-        <Label layoutX="164.0" layoutY="136.0" text="User" />
-        <Label layoutX="151.0" layoutY="192.0" text="Pasword" />
+        <TextField fx:id="usernameTextInput" layoutX="240.0" layoutY="98.0" />
+        <PasswordField fx:id="passwordInput" layoutX="240.0" layoutY="153.0" />
+        <Label layoutX="195.0" layoutY="102.0" text="User" />
+        <Label layoutX="184.0" layoutY="157.0" text="Pasword" />
+        <PasswordField fx:id="confirmPassowrdInput" layoutX="240.0" layoutY="209.0" />
+        <Label layoutX="136.0" layoutY="213.0" text="Confirm Password" />
+        <Button fx:id="signUpButton" layoutX="286.0" layoutY="334.0" mnemonicParsing="false" onAction="#switchToRegister" text="SignUp" />
     </children>
 </Pane>
