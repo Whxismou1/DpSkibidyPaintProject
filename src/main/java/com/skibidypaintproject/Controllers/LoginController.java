@@ -37,7 +37,7 @@ public class LoginController {
         User user = userDAO.getUserByUsername(username);
 
         if (user != null && BCrypt.checkpw(password, user.getPassword())) {
-            App.setRoot("dashboard");
+            App.setRoot("planificador");
         } else {
             AlertUtil.showAlert("Error", "Usuario o contraseña incorrectos", usernameTextInput.getScene().getWindow());
         }
