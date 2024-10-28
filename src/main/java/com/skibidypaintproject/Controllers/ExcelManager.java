@@ -14,12 +14,12 @@ import org.apache.poi.ss.usermodel.*;
 
 public class ExcelManager {
 
-    public List<PlanProd> readExcelPlanProd() {
+    public List<PlanProd> readExcelPlanProd(String path) {
         FileInputStream f = null;
         XSSFWorkbook libro = null;
         List<PlanProd> entradasExcel = new ArrayList<>();
         try {
-            f = new FileInputStream("src/resources/Plan Producción PPG - Versión ULE.xlsx");
+            f = new FileInputStream(path);
             libro = new XSSFWorkbook(f);
             XSSFSheet hojaPlanProd = libro.getSheetAt(0);
 

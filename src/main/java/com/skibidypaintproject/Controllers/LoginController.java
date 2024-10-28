@@ -3,11 +3,10 @@ package com.skibidypaintproject.Controllers;
 import java.io.IOException;
 
 import org.mindrot.jbcrypt.BCrypt;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import com.skibidypaintproject.App;
@@ -16,6 +15,8 @@ import com.skibidypaintproject.Entities.User;
 import com.skibidypaintproject.Utils.AlertUtil;
 
 public class LoginController {
+
+    final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
     @FXML
     private TextField usernameTextInput;
@@ -35,7 +36,7 @@ public class LoginController {
         String password = passwordInput.getText();
 
         User user = userDAO.getUserByUsername(username);
-
+        logger.info("User: " + user);
         if (user != null && BCrypt.checkpw(password, user.getPassword())) {
             App.setRoot("planificador");
         } else {

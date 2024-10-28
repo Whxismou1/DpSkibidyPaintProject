@@ -24,6 +24,7 @@ public class App extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(
                 App.class.getResource("/com/skibidypaintproject/Views/" + fxml + ".fxml"));
         Parent root = fxmlLoader.load();
+        primaryStage.setResizable(false);
         primaryStage.setScene(new Scene(root));
     }
 

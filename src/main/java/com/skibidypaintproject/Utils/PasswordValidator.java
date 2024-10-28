@@ -9,6 +9,10 @@ public class PasswordValidator {
     private static final Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
 
     public static boolean isValid(final String password) {
+        if (password.isEmpty()) {
+            return false;
+        }
+
         Matcher matcher = pattern.matcher(password);
         return matcher.matches();
     }
