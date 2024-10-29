@@ -4,17 +4,21 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0"
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0"
     xmlns="http://javafx.com/javafx/23.0.1"
     xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skibidypaintproject.Controllers.LoginController" stylesheets="@CSS/login.css">
     <children>
-        <Button fx:id="loginButton" layoutX="291.0" layoutY="279.0" mnemonicParsing="false" onAction="#login" text="Login" />
-        <TextField fx:id="usernameTextInput" layoutX="240.0" layoutY="98.0" />
-        <PasswordField fx:id="passwordInput" layoutX="240.0" layoutY="153.0" />
-        <Label layoutX="195.0" layoutY="102.0" text="User" />
-        <Label layoutX="184.0" layoutY="157.0" text="Pasword" />
-        <Button fx:id="signUpButton" layoutX="286.0" layoutY="334.0" mnemonicParsing="false" onAction="#switchToRegister" text="SignUp" />
+        <VBox alignment="CENTER" spacing="10" styleClass="container">
+            <Label text="Iniciar Sesión" styleClass="title" />
+            <Label text="Usuario" styleClass="label"/>
+            <TextField fx:id="usernameTextInput" styleClass="text-field" />
+            <Label text="Contraseña" styleClass="label"/>
+            <PasswordField fx:id="passwordInput" styleClass="password-field" />
+            <Button fx:id="loginButton" text="Login" onAction="#login" styleClass="login-button" />
+            <Label text="¿No tienes cuenta? Regístrate" styleClass="signup-link" onMouseClicked="#switchToRegister"/>
+        </VBox>
     </children>
-</Pane>
+</StackPane>

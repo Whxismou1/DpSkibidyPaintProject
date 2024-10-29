@@ -1,44 +1,108 @@
 /* login.css */
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 
+/* Pane principal para centrar el contenedor */
 .root {
   -fx-font-family: "Roboto", sans-serif;
-  -fx-background-color: #f4f4f4;
-  -fx-padding: 40;
+  -fx-background-color: linear-gradient(to bottom right, #f4f4f4, #e0e0e0);
+  -fx-padding: 20px;
+  -fx-alignment: center;
+  -fx-pref-width: 100%;
+  -fx-pref-height: 100%;
 }
 
+/* Contenedor centralizado */
+.container {
+  -fx-background-color: white;
+  -fx-border-radius: 10;
+  -fx-padding: 30px;
+  -fx-pref-width: 90%;
+  -fx-max-width: 400px;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.3, 0, 5);
+  -fx-alignment: center;
+  -fx-margin-left: auto;
+  -fx-margin-right: auto;
+}
+
+/* Estilo para centrar el título */
 .title {
   -fx-font-size: 24px;
   -fx-text-fill: #333;
+  -fx-font-weight: bold;
+  -fx-padding: 10px 0 20px 0;
+  -fx-text-alignment: center;
 }
 
-.text-field {
+/* Estilos para campos de texto */
+.text-field,
+.password-field {
   -fx-background-color: #ffffff;
   -fx-border-color: #cccccc;
   -fx-border-radius: 5;
   -fx-padding: 10;
   -fx-font-size: 14px;
   -fx-pref-height: 40;
+  -fx-pref-width: 100%;
+  -fx-max-width: 300px;
 }
 
-.text-field:focused {
+.text-field:focused,
+.password-field:focused {
   -fx-border-color: #4a90e2;
 }
 
-.login-button {
-  -fx-background-color: #4a90e2;
-  -fx-text-fill: white;
+/* Etiquetas de los campos */
+.label {
+  -fx-text-fill: #666666;
   -fx-font-size: 14px;
-  -fx-pref-height: 40;
+  -fx-padding: 5px 0;
+  -fx-alignment: CENTER_LEFT;
+}
+
+/* Botón de login */
+.login-button {
+  -fx-background-color: #1aab8a;
+  -fx-text-fill: #ffffff;
+  -fx-font-size: 16px;
+  -fx-pref-height: 45px;
+  -fx-pref-width: 100%;
+  -fx-max-width: 300px;
   -fx-border-radius: 5;
-  -fx-background-radius: 5;
+  -fx-cursor: hand;
+  -fx-transition: 300ms ease all;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 5, 0.3, 0, 3);
 }
 
 .login-button:hover {
-  -fx-background-color: #357abd;
+  -fx-background-color: #ffffff;
+  -fx-text-fill: #1aab8a;
+  -fx-border-color: #1aab8a;
+  -fx-border-width: 2px;
 }
 
-ButtonBar {
-  -fx-spacing: 10;
-  -fx-padding: 10;
+.signup-link {
+  -fx-text-fill: #4a90e2;
+  -fx-font-size: 14px;
+  -fx-cursor: hand;
+  -fx-padding: 15px 0;
+  -fx-text-alignment: center;
+}
+
+.signup-link:hover {
+  -fx-text-fill: #357abd;
+  -fx-underline: true;
+}
+
+@media screen and (max-width: 600px) {
+  .container {
+    -fx-pref-width: 90%;
+    -fx-padding: 20px;
+  }
+  .title {
+    -fx-font-size: 20px;
+  }
+  .login-button {
+    -fx-font-size: 14px;
+    -fx-pref-height: 40px;
+  }
 }

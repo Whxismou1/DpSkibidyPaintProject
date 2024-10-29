@@ -2,9 +2,10 @@ package com.skibidypaintproject.Controllers;
 
 import java.io.IOException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.mindrot.jbcrypt.BCrypt;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
@@ -16,8 +17,8 @@ import com.skibidypaintproject.Utils.AlertUtil;
 
 public class LoginController {
 
-    final Logger logger = LoggerFactory.getLogger(LoginController.class);
-
+    // final Logger logger = LoggerFactory.getLogger(LoginController.class);
+    private static final Logger logger = LogManager.getLogger(LoginController.class);
     @FXML
     private TextField usernameTextInput;
     @FXML
@@ -34,14 +35,27 @@ public class LoginController {
     private void login() throws IOException {
         String username = usernameTextInput.getText();
         String password = passwordInput.getText();
+        logger.info("Username: " + username + " trying to login");
+        if (isInputSuspicious(username) || isInputSuspicious(password)) {
+            logger.warn("Suspicious input detected");
+            App.setRoot("dashboard");
+            return;
+        }
 
         User user = userDAO.getUserByUsername(username);
-        logger.info("User: " + user);
         if (user != null && BCrypt.checkpw(password, user.getPassword())) {
+            logger.info(user.toString() + " logged in");
             App.setRoot("planificador");
         } else {
+            logger.warn("Failed login attempt: Wrong username or password");
             AlertUtil.showAlert("Error", "Usuario o contraseña incorrectos", usernameTextInput.getScene().getWindow());
         }
+    }
+
+    private boolean isInputSuspicious(String input) {
+
+        String suspiciousPattern = ".*[;''\"<>|].*";
+        return input.matches(suspiciousPattern);
     }
 
 }
