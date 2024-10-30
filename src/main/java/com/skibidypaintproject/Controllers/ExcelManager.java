@@ -320,10 +320,10 @@ public class ExcelManager {
             case "Product_Line_Desc":
                 planProd.setProductLineDesc(getCellValue(celda));
                 break;
-            case "Tech_Group_Desc":
+            case "Tech_Group___Desc":
                 planProd.setTechGroupDesc(getCellValue(celda));
                 break;
-            case "Tech_Sub_Group_Desc":
+            case "Tech_Sub_Group___Desc":
                 planProd.setTechSubGroupDesc(getCellValue(celda));
                 break;
             case "PPG_Planning_Class_Description":
