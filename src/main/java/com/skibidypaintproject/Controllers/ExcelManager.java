@@ -167,7 +167,6 @@ public class ExcelManager {
                         asignarValorEquiposCapacidad(equipos, nombreColumna, celda);
                     }
 
-                    // Agregar el contribuyente a la lista
                     entradasExcel.add(equipos);
                     actualId++;
 
@@ -255,7 +254,8 @@ public class ExcelManager {
                 planProd.setCustomerBatchNumber(getCellValue(celda));
                 break;
             case "Planned_Quantity_Uom1":
-                planProd.setPlannedQuantityUom1(getCellValue(celda));
+
+                planProd.setPlannedQuantityUom1((int) Double.parseDouble(getCellValue(celda)));
                 break;
             case "Uom1":
                 planProd.setUom1(getCellValue(celda));

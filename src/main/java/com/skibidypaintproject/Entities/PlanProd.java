@@ -14,7 +14,7 @@ public class PlanProd {
     private String salesOrderLineNumber;
     private String customerName;
     private String customerBatchNumber;
-    private String plannedQuantityUom1;
+    private int plannedQuantityUom1;
     private String uom1;
     private String plannedQuantityKg;
     private String bxStart;
@@ -193,11 +193,11 @@ public class PlanProd {
         this.customerBatchNumber = customerBatchNumber;
     }
 
-    public String getPlannedQuantityUom1() {
+    public int getPlannedQuantityUom1() {
         return plannedQuantityUom1;
     }
 
-    public void setPlannedQuantityUom1(String plannedQuantityUom1) {
+    public void setPlannedQuantityUom1(int plannedQuantityUom1) {
         this.plannedQuantityUom1 = plannedQuantityUom1;
     }
 
