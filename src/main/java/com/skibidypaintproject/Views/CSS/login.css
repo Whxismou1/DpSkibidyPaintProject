@@ -1,17 +1,21 @@
-/* login.css */
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 
-/* Pane principal para centrar el contenedor */
+:root {
+  --color-primario: #4A628A;
+  --color-secundario: #7AB2D3;
+  --color-tres: #B9E5E8;
+  --color-cuatro: #DFF2EB;
+}
+
 .root {
   -fx-font-family: "Roboto", sans-serif;
-  -fx-background-color: linear-gradient(to bottom right, #f4f4f4, #e0e0e0);
+  -fx-background-color: var(--color-cuatro);
   -fx-padding: 20px;
   -fx-alignment: center;
   -fx-pref-width: 100%;
   -fx-pref-height: 100%;
 }
 
-/* Contenedor centralizado */
 .container {
   -fx-background-color: white;
   -fx-border-radius: 10;
@@ -24,20 +28,18 @@
   -fx-margin-right: auto;
 }
 
-/* Estilo para centrar el título */
 .title {
   -fx-font-size: 24px;
-  -fx-text-fill: #333;
+  -fx-text-fill: var(--color-primario);
   -fx-font-weight: bold;
   -fx-padding: 10px 0 20px 0;
   -fx-text-alignment: center;
 }
 
-/* Estilos para campos de texto */
 .text-field,
 .password-field {
   -fx-background-color: #ffffff;
-  -fx-border-color: #cccccc;
+  -fx-border-color: var(--color-secundario);
   -fx-border-radius: 5;
   -fx-padding: 10;
   -fx-font-size: 14px;
@@ -48,10 +50,9 @@
 
 .text-field:focused,
 .password-field:focused {
-  -fx-border-color: #4a90e2;
+  -fx-border-color: var(--color-primario);
 }
 
-/* Etiquetas de los campos */
 .label {
   -fx-text-fill: #666666;
   -fx-font-size: 14px;
@@ -59,9 +60,8 @@
   -fx-alignment: CENTER_LEFT;
 }
 
-/* Botón de login */
 .login-button {
-  -fx-background-color: #1aab8a;
+  -fx-background-color: var(--color-primario);
   -fx-text-fill: #ffffff;
   -fx-font-size: 16px;
   -fx-pref-height: 45px;
@@ -74,14 +74,14 @@
 }
 
 .login-button:hover {
-  -fx-background-color: #ffffff;
-  -fx-text-fill: #1aab8a;
-  -fx-border-color: #1aab8a;
+  -fx-background-color: var(--color-tres);
+  -fx-text-fill: var(--color-secundario);
+  -fx-border-color: var(--color-tres);
   -fx-border-width: 2px;
 }
 
 .signup-link {
-  -fx-text-fill: #4a90e2;
+  -fx-text-fill: var(--color-secundario);
   -fx-font-size: 14px;
   -fx-cursor: hand;
   -fx-padding: 15px 0;
@@ -89,7 +89,7 @@
 }
 
 .signup-link:hover {
-  -fx-text-fill: #357abd;
+  -fx-text-fill: var(--color-primario);
   -fx-underline: true;
 }
 
