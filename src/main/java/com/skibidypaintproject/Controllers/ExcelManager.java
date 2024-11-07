@@ -1,16 +1,36 @@
 package com.skibidypaintproject.Controllers;
 
-import com.skibidypaintproject.Entities.*;
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.ss.usermodel.*;
+
+import com.skibidypaintproject.Entities.EquiposAsignPorCriterio;
+import com.skibidypaintproject.Entities.EquiposCapacidad;
+import com.skibidypaintproject.Entities.PlanProd;
 
 public class ExcelManager {
 
@@ -436,6 +456,119 @@ public class ExcelManager {
             default:
                 System.out.println("Columna no reconocida: " + nombreColumna);
                 break;
+        }
+    }
+
+    public void writeExcel(List<PlanProd> listaPlanProd, Workbook workbook) {
+        Sheet sheet = workbook.createSheet("Mejor Planificacion");
+        String[] encabezados = {
+            "ID", "PPG Planning Class", "Item", "PPG Inventory Class", "Item Description", "Plant",
+            "BX Ref", "Batch Status", "Routing Code", "Sales Order Number", "Sales Order Line Number",
+            "Customer Name", "Customer Batch Number", "Planned Quantity UOM1", "UOM1", "Planned Quantity KG",
+            "BX Start", "BX End", "Required Completion Date", "Item Type", "Batch Notes", "Item Notes",
+            "PPG Item Strategic", "PPG Item Fleet", "Standard Prod Time", "Textbox8", "Planned Quantity Bulk",
+            "Count Planned Quantity Bulk", "Planned Quantity FG", "Count Planned Quantity FG", "Planned Quantity Int",
+            "Count Planned Quantity Int", "Planned Quantity Total", "Count Planned Quantity Total", "Item_",
+            "PPG Inventory Class_", "PPG Planning Class_", "Item Description_", "Plant_", "BX Ref_",
+            "Batch Status_", "Planned Quantity UOM1_", "UOM1_", "Planned Quantity KG_", "BX Start_", "BX End_",
+            "Required Completion Date_", "Item Type_", "Batch Notes_", "Tech Group Desc", "Tech Sub Group Desc",
+            "Standard Prod Time_", "Item__", "PPG Inventory Class__", "PPG Planning Class__", "Item Description__",
+            "Plant__", "BX Ref__", "Batch Status__", "Product Line Desc", "Tech Group Desc_", "Tech Sub Group Desc_",
+            "PPG Planning Class Description", "Formula Code", "Formula Version", "Routing Code_", "Sales Order Number1",
+            "Sales Order Line Number_", "Customer Name_", "Planned Quantity UOM1__", "UOM1__", "Planned Quantity KG__",
+            "BX Start__", "BX End__", "Required Completion Date__", "Item Type__", "Batch Notes__", "Item Notes_",
+            "PPG Item Strategic_", "PPG Item Fleet_", "Standard Prod Time__"
+        };
+        // Escribir los encabezados en la primera fila
+        Row headerRow = sheet.createRow(0);
+        for (int i = 0; i < encabezados.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(encabezados[i]);
+        }
+
+        // Escribir los datos de la lista de PlanProd
+        int filaActual = 1;
+        for (PlanProd planProd : listaPlanProd) {
+            Row row = sheet.createRow(filaActual++);
+            Field[] fields = PlanProd.class.getDeclaredFields();
+            for (int i = 0; i < fields.length; i++) {
+                fields[i].setAccessible(true);
+                try {
+                    Object valor = fields[i].get(planProd);
+                    String valorString = valor != null ? valor.toString() : "";
+                    Cell celda = row.createCell(i);
+                    celda.setCellValue(valorString);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void ganttExcel(List<PlanProd> listaPlanProd, Workbook libro) {
+        Sheet hoja = libro.createSheet("Gantt");
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        listaPlanProd.sort((t1, t2) -> LocalDate.parse(t1.getBxStart(), formatter)
+                .compareTo(LocalDate.parse(t2.getBxStart(), formatter)));
+
+        Set<LocalDate> fechas = listaPlanProd.stream()
+                .flatMap(t -> List.of(LocalDate.parse(t.getBxStart(), formatter), LocalDate.parse(t.getBxEnd(), formatter)).stream())
+                .collect(Collectors.toCollection(TreeSet::new));
+
+        // Crear encabezado solo con las fechas exactas
+        Row encabezado = hoja.createRow(0);
+        encabezado.createCell(0).setCellValue("ID");
+
+        int colNum = 1;
+        for (LocalDate fecha : fechas) {
+            Cell cell = encabezado.createCell(colNum++);
+            cell.setCellValue(fecha.toString());
+        }
+
+        // Convertir el conjunto de fechas en una lista para obtener los índices
+        var listaFechas = fechas.stream().collect(Collectors.toList());
+
+        // Generador de colores aleatorios
+        Random random = new Random();
+
+        // Rellenar las filas con los datos de PlanProd y la barra de Gantt
+        int filaNum = 1;
+        for (PlanProd tarea : listaPlanProd) {
+            Row fila = hoja.createRow(filaNum++);
+            fila.createCell(0).setCellValue(tarea.getId()); // Columna para el ID
+
+            // Generar un color aleatorio para cada tarea
+            CellStyle estiloDuracion = libro.createCellStyle();
+            byte red = (byte) random.nextInt(256);
+            byte green = (byte) random.nextInt(256);
+            byte blue = (byte) random.nextInt(256);
+            XSSFColor color = new XSSFColor(new byte[]{red, green, blue}, null);
+            ((XSSFCellStyle) estiloDuracion).setFillForegroundColor(color);
+            estiloDuracion.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+            // Convertir bxStart y bxEnd a LocalDate
+            LocalDate fechaInicioTarea = LocalDate.parse(tarea.getBxStart(), formatter);
+            LocalDate fechaFinTarea = LocalDate.parse(tarea.getBxEnd(), formatter);
+
+            // Obtener los índices de las fechas de inicio y fin en la lista de fechas únicas
+            int indiceInicio = listaFechas.indexOf(fechaInicioTarea) + 1;
+            int indiceFin = listaFechas.indexOf(fechaFinTarea) + 1;
+
+            // Rellenar la barra de duración en el rango de fechas exactas
+            for (int i = indiceInicio; i <= indiceFin; i++) {
+                Cell celdaDuracion = fila.createCell(i);
+                celdaDuracion.setCellStyle(estiloDuracion);
+            }
+        }
+    }
+
+    
+    public void saveWorkbook(Workbook workbook, String filePath) {
+        try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
+            workbook.write(fileOut);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

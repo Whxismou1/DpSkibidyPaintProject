@@ -10,6 +10,10 @@ import com.skibidypaintproject.Utils.AlertUtil;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -20,6 +24,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 
 public class PlanificadorController {
+
     @FXML
     private Button ArchivoOrigenButton;
     @FXML
@@ -71,7 +76,14 @@ public class PlanificadorController {
                     listaPlaningClasses, listaEquipos);
 
             System.out.println("Planificación óptima:" + planificacionOptima.size());
-
+            //Creamos el libro
+            Workbook libro = new XSSFWorkbook();
+            //Escribimos la planificacion en primera hoja
+            excelManager.writeExcel(plan, libro);
+            //Escribimos la diagrama de Gantt en segunda hoja
+            excelManager.ganttExcel(plan, libro);
+            //Guardamos todo en el archivo Excel con la ruta deseada
+            excelManager.saveWorkbook(libro, "src/main/java/com/skibidypaintproject/resources/MejorPlanificacionConGantt.xlsx");
             AlertUtil.showAlert("Éxito", "Planificación realizada", null);
         } else if (archivoOrigen == null) {
             AlertUtil.showAlert("Error", "No se ha seleccionado ningun archivo para planificar", null);
@@ -95,8 +107,8 @@ public class PlanificadorController {
             if (planingClassOpt.isPresent()) {
                 PlaningClass planingClass = planingClassOpt.get();
                 List<Equipo> equiposCompatibles = equipos.stream()
-                        .filter(equipo -> equipo.getEtiquetasDeFila().equals(planingClass.getEquipo()) &&
-                                equipo.getMaxCapacidadLoteDia() >= planProd.getPlannedQuantityUom1())
+                        .filter(equipo -> equipo.getEtiquetasDeFila().equals(planingClass.getEquipo())
+                        && equipo.getMaxCapacidadLoteDia() >= planProd.getPlannedQuantityUom1())
                         .collect(Collectors.toList());
 
                 if (!equiposCompatibles.isEmpty()) {
