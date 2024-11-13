@@ -22,7 +22,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         primaryStage = stage;
-        setRoot("planificador");
+        setRoot("register");
         primaryStage.setTitle("Skibidi Paint Project");
 
         primaryStage.setResizable(false);
