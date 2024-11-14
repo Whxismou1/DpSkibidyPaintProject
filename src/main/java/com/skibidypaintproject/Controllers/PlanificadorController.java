@@ -90,10 +90,9 @@ public class PlanificadorController {
                     listaPlaningClasses, listaEquipos);
             Workbook wb = new XSSFWorkbook();
 
-            excelManager.ganttExcel(plan, wb);
-            excelManager.writeExcel(plan, wb);
+            excelManager.ganttExcel(planificacionOptima, wb);
+            excelManager.writeExcel(planificacionOptima, wb);
             excelManager.saveWorkbook(wb, "src/main/resources/PlanificacionOptima.xlsx");
-
             System.out.println("Planificación óptima:" + planificacionOptima.size());
 
             AlertUtil.showAlert("Éxito", "Planificación realizada", null);

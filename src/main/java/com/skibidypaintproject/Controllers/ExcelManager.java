@@ -68,8 +68,6 @@ public class ExcelManager {
                         String nombreColumna = nombresColumnas.get(indiceCelda);
                         asignarValorPlanProd(planProd, nombreColumna, celda);
                     }
-
-                    // Agregar el contribuyente a la lista
                     entradasExcel.add(planProd);
                     actualId++;
 
@@ -93,12 +91,12 @@ public class ExcelManager {
         return entradasExcel;
     }
 
-    public List<EquiposAsignPorCriterio> readExcelEquiposAsignPorCriterio() {
+    public List<EquiposAsignPorCriterio> readExcelEquiposAsignPorCriterio(String filePath) {
         FileInputStream f = null;
         XSSFWorkbook libro = null;
         List<EquiposAsignPorCriterio> entradasExcel = new ArrayList<>();
         try {
-            f = new FileInputStream("src/resources/Plan Producción PPG - Versión ULE.xlsx");
+            f = new FileInputStream(filePath);
             libro = new XSSFWorkbook(f);
             XSSFSheet hojaEquipos = libro.getSheetAt(1);
 
@@ -127,8 +125,6 @@ public class ExcelManager {
                         String nombreColumna = nombresColumnas.get(indiceCelda);
                         asignarValorEquiposAsignPorCriterio(equipos, nombreColumna, celda);
                     }
-
-                    // Agregar el contribuyente a la lista
                     entradasExcel.add(equipos);
                     actualId++;
 
@@ -152,12 +148,12 @@ public class ExcelManager {
         return entradasExcel;
     }
 
-    public List<EquiposCapacidad> readExcelEquiposCapacidad() {
+    public List<EquiposCapacidad> readExcelEquiposCapacidad(String filePath) {
         FileInputStream f = null;
         XSSFWorkbook libro = null;
         List<EquiposCapacidad> entradasExcel = new ArrayList<>();
         try {
-            f = new FileInputStream("src/resources/Plan Producción PPG - Versión ULE.xlsx");
+            f = new FileInputStream(filePath);
             libro = new XSSFWorkbook(f);
             XSSFSheet hojaEquipos = libro.getSheetAt(1);
 
@@ -186,7 +182,6 @@ public class ExcelManager {
                         String nombreColumna = nombresColumnas.get(indiceCelda);
                         asignarValorEquiposCapacidad(equipos, nombreColumna, celda);
                     }
-
                     entradasExcel.add(equipos);
                     actualId++;
 
@@ -462,22 +457,26 @@ public class ExcelManager {
     public void writeExcel(List<PlanProd> listaPlanProd, Workbook workbook) {
         Sheet sheet = workbook.createSheet("Mejor Planificacion");
         String[] encabezados = {
-            "ID", "PPG Planning Class", "Item", "PPG Inventory Class", "Item Description", "Plant",
-            "BX Ref", "Batch Status", "Routing Code", "Sales Order Number", "Sales Order Line Number",
-            "Customer Name", "Customer Batch Number", "Planned Quantity UOM1", "UOM1", "Planned Quantity KG",
-            "BX Start", "BX End", "Required Completion Date", "Item Type", "Batch Notes", "Item Notes",
-            "PPG Item Strategic", "PPG Item Fleet", "Standard Prod Time", "Textbox8", "Planned Quantity Bulk",
-            "Count Planned Quantity Bulk", "Planned Quantity FG", "Count Planned Quantity FG", "Planned Quantity Int",
-            "Count Planned Quantity Int", "Planned Quantity Total", "Count Planned Quantity Total", "Item_",
-            "PPG Inventory Class_", "PPG Planning Class_", "Item Description_", "Plant_", "BX Ref_",
-            "Batch Status_", "Planned Quantity UOM1_", "UOM1_", "Planned Quantity KG_", "BX Start_", "BX End_",
-            "Required Completion Date_", "Item Type_", "Batch Notes_", "Tech Group Desc", "Tech Sub Group Desc",
-            "Standard Prod Time_", "Item__", "PPG Inventory Class__", "PPG Planning Class__", "Item Description__",
-            "Plant__", "BX Ref__", "Batch Status__", "Product Line Desc", "Tech Group Desc_", "Tech Sub Group Desc_",
-            "PPG Planning Class Description", "Formula Code", "Formula Version", "Routing Code_", "Sales Order Number1",
-            "Sales Order Line Number_", "Customer Name_", "Planned Quantity UOM1__", "UOM1__", "Planned Quantity KG__",
-            "BX Start__", "BX End__", "Required Completion Date__", "Item Type__", "Batch Notes__", "Item Notes_",
-            "PPG Item Strategic_", "PPG Item Fleet_", "Standard Prod Time__"
+                "ID", "PPG Planning Class", "Item", "PPG Inventory Class", "Item Description", "Plant",
+                "BX Ref", "Batch Status", "Routing Code", "Sales Order Number", "Sales Order Line Number",
+                "Customer Name", "Customer Batch Number", "Planned Quantity UOM1", "UOM1", "Planned Quantity KG",
+                "BX Start", "BX End", "Required Completion Date", "Item Type", "Batch Notes", "Item Notes",
+                "PPG Item Strategic", "PPG Item Fleet", "Standard Prod Time", "Textbox8", "Planned Quantity Bulk",
+                "Count Planned Quantity Bulk", "Planned Quantity FG", "Count Planned Quantity FG",
+                "Planned Quantity Int",
+                "Count Planned Quantity Int", "Planned Quantity Total", "Count Planned Quantity Total", "Item_",
+                "PPG Inventory Class_", "PPG Planning Class_", "Item Description_", "Plant_", "BX Ref_",
+                "Batch Status_", "Planned Quantity UOM1_", "UOM1_", "Planned Quantity KG_", "BX Start_", "BX End_",
+                "Required Completion Date_", "Item Type_", "Batch Notes_", "Tech Group Desc", "Tech Sub Group Desc",
+                "Standard Prod Time_", "Item__", "PPG Inventory Class__", "PPG Planning Class__", "Item Description__",
+                "Plant__", "BX Ref__", "Batch Status__", "Product Line Desc", "Tech Group Desc_",
+                "Tech Sub Group Desc_",
+                "PPG Planning Class Description", "Formula Code", "Formula Version", "Routing Code_",
+                "Sales Order Number1",
+                "Sales Order Line Number_", "Customer Name_", "Planned Quantity UOM1__", "UOM1__",
+                "Planned Quantity KG__",
+                "BX Start__", "BX End__", "Required Completion Date__", "Item Type__", "Batch Notes__", "Item Notes_",
+                "PPG Item Strategic_", "PPG Item Fleet_", "Standard Prod Time__"
         };
         // Escribir los encabezados en la primera fila
         Row headerRow = sheet.createRow(0);
@@ -509,11 +508,12 @@ public class ExcelManager {
         Sheet hoja = libro.createSheet("Gantt");
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        listaPlanProd.sort((t1, t2) -> LocalDate.parse(t1.getBxStart(), formatter)
-                .compareTo(LocalDate.parse(t2.getBxStart(), formatter)));
+        //listaPlanProd.sort((t1, t2) -> LocalDate.parse(t1.getBxStart(), formatter).compareTo(LocalDate.parse(t2.getBxStart(), formatter)));
 
         Set<LocalDate> fechas = listaPlanProd.stream()
-                .flatMap(t -> List.of(LocalDate.parse(t.getBxStart(), formatter), LocalDate.parse(t.getBxEnd(), formatter)).stream())
+                .flatMap(t -> List
+                        .of(LocalDate.parse(t.getBxStart(), formatter), LocalDate.parse(t.getBxEnd(), formatter))
+                        .stream())
                 .collect(Collectors.toCollection(TreeSet::new));
 
         // Crear encabezado solo con las fechas exactas
@@ -543,7 +543,7 @@ public class ExcelManager {
             byte red = (byte) random.nextInt(256);
             byte green = (byte) random.nextInt(256);
             byte blue = (byte) random.nextInt(256);
-            XSSFColor color = new XSSFColor(new byte[]{red, green, blue}, null);
+            XSSFColor color = new XSSFColor(new byte[] { red, green, blue }, null);
             ((XSSFCellStyle) estiloDuracion).setFillForegroundColor(color);
             estiloDuracion.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
@@ -551,7 +551,8 @@ public class ExcelManager {
             LocalDate fechaInicioTarea = LocalDate.parse(tarea.getBxStart(), formatter);
             LocalDate fechaFinTarea = LocalDate.parse(tarea.getBxEnd(), formatter);
 
-            // Obtener los índices de las fechas de inicio y fin en la lista de fechas únicas
+            // Obtener los índices de las fechas de inicio y fin en la lista de fechas
+            // únicas
             int indiceInicio = listaFechas.indexOf(fechaInicioTarea) + 1;
             int indiceFin = listaFechas.indexOf(fechaFinTarea) + 1;
 
@@ -563,7 +564,6 @@ public class ExcelManager {
         }
     }
 
-    
     public void saveWorkbook(Workbook workbook, String filePath) {
         try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
             workbook.write(fileOut);
