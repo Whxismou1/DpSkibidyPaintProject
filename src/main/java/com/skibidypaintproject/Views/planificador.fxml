@@ -8,7 +8,7 @@
 
 <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skibidypaintproject.Controllers.PlanificadorController" stylesheets="@CSS/planificador.css">
    <children>
-      <VBox alignment="CENTER" spacing="15">
+      <VBox alignment="CENTER" spacing="10" styleClass="container">
          <Button fx:id="ArchivoOrigenButton" mnemonicParsing="false" onAction="#selectArchivoOrigen" text="Seleccionar archivo de origen" />
          <Label fx:id="NombreArchivo" mnemonicParsing="false" text="" />
          <Button fx:id="PLanificadorButton" mnemonicParsing="false" onAction="#planificar" text="Futuro Planificador" />

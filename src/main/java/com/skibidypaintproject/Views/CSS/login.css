@@ -1,7 +1,6 @@
 /* login.css */
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 
-/* Pane principal para centrar el contenedor */
 .root {
   -fx-font-family: "Roboto", sans-serif;
   -fx-background-color: linear-gradient(to bottom right, #DFF2EB, #B9E5E8);
@@ -11,7 +10,6 @@
   -fx-pref-height: 100%;
 }
 
-/* Contenedor centralizado */
 .container {
   -fx-background-color: white;
   -fx-border-radius: 10;
@@ -24,10 +22,9 @@
   -fx-margin-right: auto;
 }
 
-/* Estilo para centrar el título */
 .title {
   -fx-font-size: 24px;
-  -fx-text-fill: #4A628A; /* color primario */
+  -fx-text-fill: #4A628A; 
   -fx-font-weight: bold;
   -fx-padding: 10px 0 20px 0;
   -fx-text-alignment: center;
@@ -74,7 +71,7 @@
 }
 
 .login-button:hover {
-  -fx-background-color: #ffffff;
+  -fx-background-color: #7AB2D3;
   -fx-text-fill: #4A628A; /* color primario */
   -fx-border-color: #4A628A; /* color primario */
   -fx-border-width: 2px;
