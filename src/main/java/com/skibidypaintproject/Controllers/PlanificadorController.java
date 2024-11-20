@@ -24,6 +24,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.stage.FileChooser;
 import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextArea;
 
 public class PlanificadorController {
@@ -35,6 +37,8 @@ public class PlanificadorController {
     private Label NombreArchivo;
     @FXML
     private TextArea AreaElems;
+    @FXML
+    private Spinner<Integer> margenPicker;
     private File archivoOrigen;
 
     private ExcelManager excelManager = new ExcelManager();
@@ -89,7 +93,6 @@ public class PlanificadorController {
             List<PlanProd> planificacionOptima = generarMejorPlanificacion2(plan,
                     listaPlaningClasses, listaEquipos);
             Workbook wb = new XSSFWorkbook();
-
             excelManager.ganttExcel(planificacionOptima, wb);
             excelManager.writeExcel(planificacionOptima, wb);
             excelManager.saveWorkbook(wb, "src/main/resources/PlanificacionOptima.xlsx");
@@ -153,11 +156,27 @@ public class PlanificadorController {
         return planificacionOptima;
     }
 
+
+    private static class Intervalo {
+        LocalDate inicio;
+        LocalDate fin;
+
+        Intervalo(LocalDate inicio, LocalDate fin) {
+            this.inicio = inicio;
+            this.fin = fin;
+        }
+
+        boolean seSolapa(Intervalo otro) {
+            return !inicio.isAfter(otro.fin) && !fin.isBefore(otro.inicio);
+        }
+    }
+
+
     public List<PlanProd> generarMejorPlanificacion2(List<PlanProd> planificaciones, List<PlaningClass> planingClasses,
             List<Equipo> equipos) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
+        int margen=margenPicker.getValue();
         // Se preprocesan los equipos para tener una lista con la cantidad de
         // equipos reales
         List<Equipo> equiposPreproces = new ArrayList<>();
@@ -174,7 +193,7 @@ public class PlanificadorController {
         planificaciones.sort(Comparator.comparing(PlanProd::getRequiredCompletionDate));
 
         // Counter maquinas ocupadas
-        HashMap<String, LocalDate> ocupacionEquipos = new HashMap<String, LocalDate>();
+        HashMap<String, List<Intervalo>> ocupacionEquipos = new HashMap<String, List<Intervalo>>();
 
         // Se itera sobre cada plan de producción
         for (PlanProd planProdActual : planificaciones) {
@@ -213,22 +232,23 @@ public class PlanificadorController {
                 int semanasNecesarias = (int) Math.ceil(numLotesRequeridos / capacidadLotSemana);
 
                 LocalDate fechaInicio = LocalDate.parse(planProdActual.getRequiredCompletionDate(), formatter)
-                        .minusDays(diasNecesarios);
+                        .minusDays(diasNecesarios+margen);
+                LocalDate fechaFin = fechaInicio.plusDays(diasNecesarios);
                 boolean equipoDisponible = true;
 
-                for (int i = 0; i < diasNecesarios; i++) {
-                    LocalDate dia = fechaInicio.plusDays(i);
-                    if (ocupacionEquipos.containsKey(equipoActual.getEtiquetasDeFila())
-                            && ocupacionEquipos.get(equipoActual.getEtiquetasDeFila()).isAfter(dia)) {
-                        equipoDisponible = false;
-                        break;
-                    }
-                }
+                Intervalo nuevoIntervalo = new Intervalo(fechaInicio, fechaFin);
+                List<Intervalo> intervalosOcupados = ocupacionEquipos.getOrDefault(equipoActual, new ArrayList<>());
 
-                if (equipoDisponible) {
+                boolean seSolapa = intervalosOcupados.stream().anyMatch(intervalo -> intervalo.seSolapa(nuevoIntervalo));
+
+                if (!seSolapa) {
+                    intervalosOcupados.add(nuevoIntervalo);
+                    ocupacionEquipos.put(equipoActual.getEtiquetasDeFila(), intervalosOcupados);
+
+                    planProdActual.setBxStart(fechaInicio.format(formatter));
+                    planProdActual.setBxEnd(fechaFin.format(formatter));
+
                     planificacionOptima.add(planProdActual);
-                    LocalDate fechaFin = fechaInicio.plusDays(diasNecesarios);
-                    ocupacionEquipos.put(equipoActual.getEtiquetasDeFila(), fechaFin);
                     break;
                 }
 
@@ -308,6 +328,11 @@ public class PlanificadorController {
             }
         }
         return planificacionOptima;
+    }
+
+    @FXML
+    private void initialize(){
+        margenPicker.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 1));
     }
 }
 /**

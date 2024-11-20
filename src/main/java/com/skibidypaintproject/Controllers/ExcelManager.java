@@ -508,7 +508,7 @@ public class ExcelManager {
         Sheet hoja = libro.createSheet("Gantt");
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        //listaPlanProd.sort((t1, t2) -> LocalDate.parse(t1.getBxStart(), formatter).compareTo(LocalDate.parse(t2.getBxStart(), formatter)));
+        listaPlanProd.sort((t1, t2) -> LocalDate.parse(t1.getBxStart(), formatter).compareTo(LocalDate.parse(t2.getBxStart(), formatter)));
 
         Set<LocalDate> fechas = listaPlanProd.stream()
                 .flatMap(t -> List
