@@ -1,8 +1,10 @@
 package com.skibidypaintproject.Controllers;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.awt.Desktop;
 
 import com.skibidypaintproject.Daos.PlanningClassDAO;
 import com.skibidypaintproject.Entities.Equipo;
@@ -13,6 +15,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -41,6 +45,7 @@ public class PlanificadorController {
     private Spinner<Integer> margenPicker;
     private File archivoOrigen;
 
+    private static final Logger logger = LogManager.getLogger(PlanificadorController.class);
     private ExcelManager excelManager = new ExcelManager();
 
     private PlanningClassDAO pcDAO = new PlanningClassDAO();
@@ -48,6 +53,7 @@ public class PlanificadorController {
     private List<Equipo> listaEquipos = new ArrayList<Equipo>();
 
     private List<PlaningClass> listaPlaningClasses = new ArrayList<PlaningClass>();
+
 
     @FXML
     private void selectArchivoOrigen() {
@@ -62,6 +68,7 @@ public class PlanificadorController {
         } else {
             AlertUtil.showAlert("Éxito", "Archivo origen seleccionado", ArchivoOrigenButton.getScene().getWindow());
             NombreArchivo.setText("Archivo seleccionado: " + archivoOrigen.getName());
+            logger.info("Archivo origen seleccionado: " + archivoOrigen.getPath());
         }
         System.out.println("Archivo origen seleccionado");
     }
@@ -71,8 +78,10 @@ public class PlanificadorController {
         if (archivoOrigen != null) {
             List<PlanProd> plan = new ArrayList<PlanProd>();
             plan = excelManager.readExcelPlanProd(archivoOrigen.getPath());
+            logger.info("Planificaciones cargadas correctamente: " + plan.size());
 
             listaEquipos = pcDAO.obtenerEquipos();
+            logger.info("Equipos cargados correctamente: " + listaEquipos.size());
             listaPlaningClasses = pcDAO.obtenerPlaningClasses();
 
             // for (PlaningClass planProd : listaPlaningClasses) {
@@ -85,6 +94,7 @@ public class PlanificadorController {
                     pc.setTecnologia("");
                 }
             }
+            logger.info("Planning classes cargadas correctamente: " + listaPlaningClasses.size());
 
             System.out.println("Planificaciones leídas:" + plan.size());
             System.out.println("Equipos leídos:" + listaEquipos.size());
@@ -97,6 +107,15 @@ public class PlanificadorController {
             excelManager.writeExcel(planificacionOptima, wb);
             excelManager.saveWorkbook(wb, "src/main/resources/PlanificacionOptima.xlsx");
             System.out.println("Planificación óptima:" + planificacionOptima.size());
+            if (Desktop.isDesktopSupported()) {
+            Desktop desktop = Desktop.getDesktop();
+            try {
+                // Abre el archivo con la aplicación predeterminada
+                desktop.open(new File("src/main/resources/PlanificacionOptima.xlsx"));
+            } catch (IOException e) {
+                System.err.println("No se pudo abrir el archivo: " + e.getMessage());
+            }
+        } 
 
             AlertUtil.showAlert("Éxito", "Planificación realizada", null);
         } else if (archivoOrigen == null) {
@@ -153,10 +172,13 @@ public class PlanificadorController {
                 }
             }
         }
+
         return planificacionOptima;
     }
 
-
+    /**
+     * Clase auxiliar para manejar intervalos de fechas en los planes de producción
+     */
     private static class Intervalo {
         LocalDate inicio;
         LocalDate fin;
@@ -254,7 +276,7 @@ public class PlanificadorController {
 
             }
         }
-
+        logger.info("Planificación óptima generada");
         return planificacionOptima;
     }
 

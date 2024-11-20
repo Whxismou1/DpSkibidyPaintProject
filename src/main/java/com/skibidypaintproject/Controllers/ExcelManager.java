@@ -16,6 +16,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -33,6 +35,8 @@ import com.skibidypaintproject.Entities.EquiposCapacidad;
 import com.skibidypaintproject.Entities.PlanProd;
 
 public class ExcelManager {
+
+    Logger logger = LogManager.getLogger(ExcelManager.class);
 
     public List<PlanProd> readExcelPlanProd(String path) {
         FileInputStream f = null;
@@ -568,6 +572,7 @@ public class ExcelManager {
         try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
             workbook.write(fileOut);
         } catch (IOException e) {
+            logger.warn("Error al guardar el archivo Excel");
             e.printStackTrace();
         }
     }

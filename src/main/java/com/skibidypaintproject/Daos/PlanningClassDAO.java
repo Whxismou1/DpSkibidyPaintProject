@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.skibidypaintproject.Controllers.BBDDController;
 import com.skibidypaintproject.Entities.Equipo;
@@ -14,6 +16,7 @@ import com.skibidypaintproject.Entities.PlaningClass;
 public class PlanningClassDAO {
 
     private final Connection connection;
+    private static final Logger logger = LogManager.getLogger(UserDAO.class);
 
     public PlanningClassDAO() {
         this.connection = BBDDController.getInstance().getConnection();
@@ -35,8 +38,10 @@ public class PlanningClassDAO {
                 equipos.add(equipo);
             }
         } catch (Exception e) {
+            logger.warn("Error obteniendo los equipos de la base de datos");
             e.printStackTrace();
         }
+        logger.info("Equipos obtenidos correctamente de la base de datos");
         return equipos;
     }
 
@@ -59,8 +64,10 @@ public class PlanningClassDAO {
                 planingClasses.add(planingClass);
             }
         } catch (Exception e) {
+            logger.warn("Error obteniendo las planing classes de la base de datos");
             e.printStackTrace();
         }
+        logger.info("Planng classes obtenidas correctamente de la base de datos");
         return planingClasses;
     }
 }
