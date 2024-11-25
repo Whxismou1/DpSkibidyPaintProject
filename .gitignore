@@ -4,3 +4,4 @@ target/
 .idea/
 
 log.txt
+src/main/resources/PlanificacionOptima.xlsx
