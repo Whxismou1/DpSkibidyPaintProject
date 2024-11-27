@@ -88,6 +88,14 @@
                     <include>**/*.css</include>
                 </includes>
             </resource>
+             <resource>
+                <directory>src/main/java/com/skibidypaintproject/Resources</directory>
+                <targetPath>com/skibidypaintproject/Resources</targetPath>
+                <includes>
+                    <include>**/*.png</include>
+                    <include>**/*.mp4</include>
+                </includes>
+            </resource>
         </resources>
         <plugins>
             <plugin>
