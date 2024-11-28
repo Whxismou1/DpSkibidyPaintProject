@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.awt.Desktop;
 
+import com.skibidypaintproject.App;
 import com.skibidypaintproject.Daos.PlanningClassDAO;
 import com.skibidypaintproject.Entities.Equipo;
 import com.skibidypaintproject.Entities.PlanProd;
@@ -53,6 +54,12 @@ public class PlanificadorController {
     private List<Equipo> listaEquipos = new ArrayList<Equipo>();
 
     private List<PlaningClass> listaPlaningClasses = new ArrayList<PlaningClass>();
+
+    @FXML
+    private void logOut() throws Throwable{
+        App.setRoot("login");
+    }
+
 
 
     @FXML

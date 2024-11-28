@@ -6,8 +6,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public final class BBDDController {
-
-    private Dotenv dotenv = Dotenv.load();
+    private Dotenv dotenv = Dotenv.configure().directory("src/main/resources/").load();
     private String mode = dotenv.get("MODE");
     private String URL = dotenv.get("DB_URL");
     private String USER = dotenv.get("USER_DB");
@@ -17,8 +16,7 @@ public final class BBDDController {
 
     private BBDDController() {
         try {
-            connectionBBDD = mode.equals("dev") ? DriverManager.getConnection(URL, USER, PASSWORD)
-                    : DriverManager.getConnection(URL, USER, PASSWORD);
+            connectionBBDD = DriverManager.getConnection(URL, USER, PASSWORD);
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -7,14 +7,25 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@CSS/planificador.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skibidypaintproject.Controllers.PlanificadorController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+   prefHeight="400.0" prefWidth="600.0" stylesheets="@CSS/planificador.css"
+   xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1"
+   fx:controller="com.skibidypaintproject.Controllers.PlanificadorController">
    <children>
+
+      <VBox alignment="TOP_RIGHT">
+         <Button fx:id="botonLogOut" mnemonicParsing="false" onAction="#logOut"
+            text="Log Out" />
+      </VBox>
+
       <VBox alignment="CENTER" spacing="10" styleClass="container">
-         <Button fx:id="ArchivoOrigenButton" mnemonicParsing="false" onAction="#selectArchivoOrigen" text="Seleccionar archivo de origen" />
+         <Button fx:id="ArchivoOrigenButton" mnemonicParsing="false" onAction="#selectArchivoOrigen"
+            text="Seleccionar archivo de origen" />
          <Label fx:id="NombreArchivo" mnemonicParsing="false" text="" />
          <Label text="Seleccionar dias de margen para la produccion" />
          <Spinner id="margenPicker" fx:id="margenPicker" />
-         <Button fx:id="PLanificadorButton" mnemonicParsing="false" onAction="#planificar" text="Futuro Planificador" />
+         <Button fx:id="PLanificadorButton" mnemonicParsing="false" onAction="#planificar"
+            text="Futuro Planificador" />
          <TextArea fx:id="AreaElems" editable="false" prefHeight="200.0" prefWidth="410.0" />
       </VBox>
    </children>

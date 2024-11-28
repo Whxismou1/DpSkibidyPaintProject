@@ -17,6 +17,17 @@
     -fx-spacing: 15px;
 }
 
+#botonLogOut{
+    -fx-background-color: #4A628A;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 10px 20px;
+    -fx-background-radius: 5px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0.3, 0, 3);
+    -fx-alignment: center;
+}
+
 /* Botones del planificador */
 #ArchivoOrigenButton, #PLanificadorButton {
     -fx-background-color: #4A628A; /* Color secundario */
