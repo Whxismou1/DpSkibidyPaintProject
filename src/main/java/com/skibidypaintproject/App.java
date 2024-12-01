@@ -23,9 +23,9 @@ public class App extends Application {
     public void start(Stage stage) throws IOException {
         primaryStage = stage;
         setRoot("login");
-        primaryStage.setTitle("Skibidi Paint Project");
+        primaryStage.setTitle("PPG - Planificador Lotes");
 
-        primaryStage.setResizable(false);
+        primaryStage.setResizable(true);
         primaryStage.setWidth(SMALL_WIDTH);
         primaryStage.setHeight(SMALL_HEIGHT);
         primaryStage.fullScreenProperty().addListener((obs, wasFullScreen, isNowFullScreen) -> {
@@ -47,7 +47,7 @@ public class App extends Application {
     }
 
     public static void main(String[] args) {
-        logger.info("Starting Skibidi Paint Project instance");
+        logger.info("Starting PPG Paint Project planification application");
         launch(args);
     }
 }

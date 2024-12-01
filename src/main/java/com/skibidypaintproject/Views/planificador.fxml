@@ -23,7 +23,8 @@
             text="Seleccionar archivo de origen" />
          <Label fx:id="NombreArchivo" mnemonicParsing="false" text="" />
          <Label text="Seleccionar dias de margen para la produccion" />
-         <Spinner id="margenPicker" fx:id="margenPicker" />
+         <Spinner id="margenPicker" fx:id="margenPicker"  />
+      
          <Button fx:id="PLanificadorButton" mnemonicParsing="false" onAction="#planificar"
             text="Futuro Planificador" />
          <TextArea fx:id="AreaElems" editable="false" prefHeight="200.0" prefWidth="410.0" />

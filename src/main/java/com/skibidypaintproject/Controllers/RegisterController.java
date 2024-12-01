@@ -32,6 +32,7 @@ public class RegisterController {
 
     @FXML
     private void backToLogin() throws IOException {
+        logger.info("Switching to login page");
         App.setRoot("login");
     }
 
@@ -61,7 +62,7 @@ public class RegisterController {
 
         if (newUser != null && userDAO.insertUser(newUser)) {
             AlertUtil.showAlert("Éxito", "Usuario registrado correctamente", actualWIndow);
-            logger.info(newUser.toString() + " registered");
+            logger.info(newUser.toString() + " registered- Switching to login page");
             App.setRoot("login");
         } else {
             AlertUtil.showAlert("Error", "No se pudo registrar el usuario", actualWIndow);

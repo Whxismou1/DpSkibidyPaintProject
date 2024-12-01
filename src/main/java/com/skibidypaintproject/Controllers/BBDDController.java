@@ -6,8 +6,12 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public final class BBDDController {
-    private Dotenv dotenv = Dotenv.configure().directory("src/main/resources/").load();
-    private String mode = dotenv.get("MODE");
+    // private Dotenv dotenv =
+    // Dotenv.configure().directory("src/main/resources/").load();
+    private Dotenv dotenv = Dotenv.configure()
+            .ignoreIfMalformed()
+            .ignoreIfMissing()
+            .load();
     private String URL = dotenv.get("DB_URL");
     private String USER = dotenv.get("USER_DB");
     private String PASSWORD = dotenv.get("PASS_DB");

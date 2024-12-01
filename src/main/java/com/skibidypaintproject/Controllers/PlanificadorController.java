@@ -57,9 +57,16 @@ public class PlanificadorController {
 
     @FXML
     private void logOut() throws Throwable{
+        logger.info("Logging out");
         App.setRoot("login");
     }
 
+    @FXML
+    public void initialize() {
+        // Configura el Spinner con un rango y un valor por defecto
+        SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 30, 0);
+        margenPicker.setValueFactory(valueFactory);
+    }
 
 
     @FXML
@@ -72,12 +79,13 @@ public class PlanificadorController {
         if (archivoOrigen == null) {
             AlertUtil.showAlert("Error", "No se pudo seleccionar el archivo origen",
                     ArchivoOrigenButton.getScene().getWindow());
+            logger.error("The origin file could not be selected");
         } else {
             AlertUtil.showAlert("Éxito", "Archivo origen seleccionado", ArchivoOrigenButton.getScene().getWindow());
             NombreArchivo.setText("Archivo seleccionado: " + archivoOrigen.getName());
-            logger.info("Archivo origen seleccionado: " + archivoOrigen.getPath());
+            logger.info("The origin file was selected: " + archivoOrigen.getPath());
+            System.out.println("Archivo origen seleccionado");
         }
-        System.out.println("Archivo origen seleccionado");
     }
 
     @FXML
@@ -85,35 +93,36 @@ public class PlanificadorController {
         if (archivoOrigen != null) {
             List<PlanProd> plan = new ArrayList<PlanProd>();
             plan = excelManager.readExcelPlanProd(archivoOrigen.getPath());
-            logger.info("Planificaciones cargadas correctamente: " + plan.size());
-
+            logger.info("Plannifications read correctly: " + plan.size());
             listaEquipos = pcDAO.obtenerEquipos();
-            logger.info("Equipos cargados correctamente: " + listaEquipos.size());
+            logger.info("Equipments read correctly: " + listaEquipos.size());
             listaPlaningClasses = pcDAO.obtenerPlaningClasses();
 
-            // for (PlaningClass planProd : listaPlaningClasses) {
-            // System.out.println(planProd.toString());
-            // break;
-            // }
 
             for (PlaningClass pc : listaPlaningClasses) {
                 if (pc.getTecnologia() == null) {
                     pc.setTecnologia("");
                 }
             }
-            logger.info("Planning classes cargadas correctamente: " + listaPlaningClasses.size());
+            logger.info("PlanningClasses read and preproccess correctly: " + listaPlaningClasses.size());
 
-            System.out.println("Planificaciones leídas:" + plan.size());
-            System.out.println("Equipos leídos:" + listaEquipos.size());
-            System.out.println("PlaningClasses leídas:" + listaPlaningClasses.size());
-
-            List<PlanProd> planificacionOptima = generarMejorPlanificacion2(plan,
+            // System.out.println("Planificaciones leídas:" + plan.size());
+            // System.out.println("Equipos leídos:" + listaEquipos.size());
+            // System.out.println("PlaningClasses leídas:" + listaPlaningClasses.size());
+            logger.info("Starting optimal planning generation");
+            System.out.println("Generando planificación óptima...");
+            List<PlanProd> planificacionOptima = generarMejorPlanificacion(plan,
                     listaPlaningClasses, listaEquipos);
+            logger.info("Optimal planning generated: " + planificacionOptima.size());
+
+            logger.info("Starting to write the optimal planning to the excel file");
+            System.out.println("Guardando planificación óptima...");
             Workbook wb = new XSSFWorkbook();
             excelManager.ganttExcel(planificacionOptima, wb);
             excelManager.writeExcel(planificacionOptima, wb);
             excelManager.saveWorkbook(wb, "src/main/resources/PlanificacionOptima.xlsx");
-            System.out.println("Planificación óptima:" + planificacionOptima.size());
+            logger.info("Optimal planning written to the excel file");
+            System.out.println("Planificación óptima guardada");
             if (Desktop.isDesktopSupported()) {
             Desktop desktop = Desktop.getDesktop();
             try {
@@ -122,65 +131,17 @@ public class PlanificadorController {
             } catch (IOException e) {
                 System.err.println("No se pudo abrir el archivo: " + e.getMessage());
             }
+            
         } 
 
             AlertUtil.showAlert("Éxito", "Planificación realizada", null);
         } else if (archivoOrigen == null) {
             AlertUtil.showAlert("Error", "No se ha seleccionado ningun archivo para planificar", null);
+            logger.error("No origin file selected");
         } else {
             AlertUtil.showAlert("Error", "No se pudo realizar la planificación", null);
+            logger.error("Error generating planning");
         }
-    }
-
-    public List<PlanProd> generarMejorPlanificacion(List<PlanProd> planificaciones, List<PlaningClass> planingClasses,
-            List<Equipo> equipos) {
-
-        planificaciones.sort(Comparator.comparing(PlanProd::getRequiredCompletionDate));
-
-        List<PlanProd> planificacionOptima = new ArrayList<>();
-
-        for (PlanProd planProd : planificaciones) {
-            Optional<PlaningClass> planingClassOpt = planingClasses.stream()
-                    .filter(pc -> pc.getPlaningClass().equals(planProd.getPpgPlanningClass()))
-                    .findFirst();
-
-            if (planingClassOpt.isPresent()) {
-                PlaningClass planingClass = planingClassOpt.get();
-                List<Equipo> equiposCompatibles = equipos.stream()
-                        .filter(equipo -> equipo.getEtiquetasDeFila().equals(planingClass.getEquipo()) &&
-                                equipo.getMaxCapacidadLoteDia() >= planProd.getPlannedQuantityUom1())
-                        .collect(Collectors.toList());
-
-                if (!equiposCompatibles.isEmpty()) {
-                    System.out.println("aaaaaaa");
-                    double cantidadRestante = planProd.getPlannedQuantityUom1();
-                    for (Equipo equipo : equiposCompatibles) {
-                        double produccionDiaria = equipo.getMaxCapacidadLoteDia() * equipo.getNumeroEquipos();
-                        double produccionSemanal = equipo.getMaxCapacidadLoteSemana() * equipo.getNumeroEquipos();
-
-                        if (cantidadRestante <= produccionSemanal) {
-                            int diasNecesarios = (int) Math.ceil(cantidadRestante / produccionDiaria);
-                            if (diasNecesarios <= 7) {
-
-                                planificacionOptima.add(planProd);
-                                cantidadRestante = 0;
-                                break;
-                            } else {
-
-                                planificacionOptima.add(planProd);
-                                cantidadRestante -= produccionSemanal;
-                            }
-                        }
-                    }
-                    if (cantidadRestante > 0) {
-                        System.out.println("La planificación de " + planProd.getItem()
-                                + " no se pudo completar con los equipos disponibles.");
-                    }
-                }
-            }
-        }
-
-        return planificacionOptima;
     }
 
     /**
@@ -201,7 +162,7 @@ public class PlanificadorController {
     }
 
 
-    public List<PlanProd> generarMejorPlanificacion2(List<PlanProd> planificaciones, List<PlaningClass> planingClasses,
+    public List<PlanProd> generarMejorPlanificacion(List<PlanProd> planificaciones, List<PlaningClass> planingClasses,
             List<Equipo> equipos) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -287,260 +248,4 @@ public class PlanificadorController {
         return planificacionOptima;
     }
 
-    /**
-     * Método
-     * que genera la mejor planificación de producción en función de la capacidad
-     * real de
-     * los equipos
-     */
-
-    public List<PlanProd> generarMejorPlanificacions(List<PlanProd> planificaciones, List<PlaningClass> planingClasses,
-            List<Equipo> equipos) {
-
-        // Ordenar por fecha de finalización requerida
-        planificaciones.sort(Comparator.comparing(PlanProd::getRequiredCompletionDate));
-
-        List<PlanProd> planificacionOptima = new ArrayList<>();
-
-        for (PlanProd planProd : planificaciones) {
-            Optional<PlaningClass> planingClassOpt = planingClasses.stream()
-                    .filter(pc -> pc.getPlaningClass().equals(planProd.getPpgPlanningClass()))
-                    .findFirst();
-
-            if (planingClassOpt.isPresent()) {
-                PlaningClass planingClass = planingClassOpt.get();
-
-                // Equipos compatibles según el tipo de equipo y capacidad en kilos
-                List<Equipo> equiposCompatibles = equipos.stream()
-                        .filter(equipo -> equipo.getEtiquetasDeFila().equals(planingClass.getEquipo()) &&
-                                planingClass.getTamanoMax() >= planProd.getPlannedQuantityUom1()) // Compatibilidad en
-                                                                                                  // kilos
-                        .collect(Collectors.toList());
-
-                if (!equiposCompatibles.isEmpty()) {
-                    System.out.println("Encontrado equipo compatible para: " +
-                            planProd.getItem());
-
-                    double cantidadRestante = planProd.getPlannedQuantityUom1(); // Usar cantidad en kilos
-                    for (Equipo equipo : equiposCompatibles) {
-                        // Calcular producción diaria y semanal en función del número de equipos y
-                        // capacidad en kilos
-                        double produccionDiaria = equipo.getMaxCapacidadLoteDia() *
-                                planingClass.getTamanoMax() * equipo.getNumeroEquipos();
-                        double produccionSemanal = equipo.getMaxCapacidadLoteSemana() *
-                                planingClass.getTamanoMax() * equipo.getNumeroEquipos();
-
-                        // Verificar si la cantidad restante se puede cubrir con la producción semanal
-                        if (cantidadRestante <= produccionSemanal) {
-                            int diasNecesarios = (int) Math.ceil(cantidadRestante / produccionDiaria);
-
-                            if (diasNecesarios <= 7) {
-                                // Se puede completar dentro de la semana
-                                planificacionOptima.add(planProd);
-                                cantidadRestante = 0;
-                                break;
-                            } else {
-                                // Agregar producción parcial para esta semana y continuar con la cantidad
-                                // restante
-                                planificacionOptima.add(planProd);
-                                cantidadRestante -= produccionSemanal;
-                            }
-                        }
-                    }
-
-                    // Si no se pudo completar la cantidad restante
-                    if (cantidadRestante > 0) {
-                        System.out.println("La planificación de " + planProd.getItem()
-                                + " no se pudo completar con los equipos disponibles.");
-                    }
-                }
-            }
-        }
-        return planificacionOptima;
-    }
-
-    @FXML
-    private void initialize(){
-        margenPicker.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 1));
-    }
 }
-/**
- * Método que genera la mejor planificación de producción en función de la fecha
- * y ocupada
- */
-
-// import java.time.LocalDate;
-
-// public List<PlanProd> generarMejorPlanificacion(List<PlanProd>
-// planificaciones, List<PlaningClass> planingClasses,
-// List<Equipo> equipos) {
-
-// // Ordenar planificaciones por fecha de finalización requerida
-// planificaciones.sort(Comparator.comparing(PlanProd::getRequiredCompletionDate));
-
-// List<PlanProd> planificacionOptima = new ArrayList<>();
-
-// for (PlanProd planProd : planificaciones) {
-// Optional<PlaningClass> planingClassOpt = planingClasses.stream()
-// .filter(pc -> pc.getPlaningClass().equals(planProd.getPpgPlanningClass()))
-// .findFirst();
-
-// if (planingClassOpt.isPresent()) {
-// PlaningClass planingClass = planingClassOpt.get();
-
-// // Equipos compatibles según el tipo de equipo y capacidad en kilos
-// List<Equipo> equiposCompatibles = equipos.stream()
-// .filter(equipo ->
-// equipo.getEtiquetasDeFila().equals(planingClass.getEquipo()) &&
-// planingClass.getTamañoMax() >= planProd.getPlannedQuantityKg()) //
-// Compatibilidad en kilos
-// .collect(Collectors.toList());
-
-// if (!equiposCompatibles.isEmpty()) {
-// double cantidadRestante = planProd.getPlannedQuantityKg();
-
-// for (Equipo equipo : equiposCompatibles) {
-// double produccionDiaria = equipo.getMaxCapacidadLoteDia() *
-// planingClass.getTamañoMax() * equipo.getNumeroEquipos();
-// double produccionSemanal = equipo.getMaxCapacidadLoteSemana() *
-// planingClass.getTamañoMax() * equipo.getNumeroEquipos();
-
-// // Verificar si la cantidad restante se puede cubrir con la producción
-// semanal
-// if (cantidadRestante <= produccionSemanal) {
-// int diasNecesarios = (int) Math.ceil(cantidadRestante / produccionDiaria);
-
-// // Comprobar si el equipo está disponible en los próximos `diasNecesarios`
-// días
-// LocalDate fechaInicio =
-// planProd.getRequiredCompletionDate().minusDays(diasNecesarios);
-// boolean equipoDisponible = true;
-
-// for (int i = 0; i < diasNecesarios; i++) {
-// LocalDate dia = fechaInicio.plusDays(i);
-// if (equipo.isOcupado(dia)) { // Método que verifica si el equipo está ocupado
-// en esa fecha
-// equipoDisponible = false;
-// break;
-// }
-// }
-
-// if (equipoDisponible) {
-// // Agregar la planificación a la lista óptima
-// planificacionOptima.add(planProd);
-
-// // Registrar la ocupación del equipo para los días requeridos
-// for (int i = 0; i < diasNecesarios; i++) {
-// equipo.setOcupado(fechaInicio.plusDays(i)); // Método que marca el equipo
-// como ocupado
-// }
-
-// cantidadRestante = 0;
-// break;
-// } else {
-// System.out.println("Equipo no disponible para " + planProd.getItem());
-// }
-// }
-// }
-
-// if (cantidadRestante > 0) {
-// System.out.println("No se pudo completar la planificación para " +
-// planProd.getItem() + " debido a la disponibilidad de los equipos.");
-// }
-// }
-// }
-// }
-// return planificacionOptima;
-// }
-
-/**
- * Método que genera la mejor planificación de producción en función de las
- * batch
- */
-
-// import java.time.LocalDate;
-// import java.util.HashMap;
-// import java.util.Map;
-
-// public List<PlanProd> generarMejorPlanificacion(List<PlanProd>
-// planificaciones, List<PlaningClass> planingClasses,
-// List<Equipo> equipos) {
-
-// // Ordenar planificaciones por fecha de finalización requerida y prioridad en
-// Batch_Status
-// planificaciones.sort(Comparator.comparing(PlanProd::getRequiredCompletionDate)
-// .thenComparing(plan -> !plan.getBatchStatus().equalsIgnoreCase("WIP") &&
-// !plan.getBatchStatus().equalsIgnoreCase("Pending")));
-
-// List<PlanProd> planificacionOptima = new ArrayList<>();
-
-// for (PlanProd planProd : planificaciones) {
-// Optional<PlaningClass> planingClassOpt = planingClasses.stream()
-// .filter(pc -> pc.getPlaningClass().equals(planProd.getPpgPlanningClass()))
-// .findFirst();
-
-// if (planingClassOpt.isPresent()) {
-// PlaningClass planingClass = planingClassOpt.get();
-
-// List<Equipo> equiposCompatibles = equipos.stream()
-// .filter(equipo ->
-// equipo.getEtiquetasDeFila().equals(planingClass.getEquipo()) &&
-// planingClass.getTamañoMax() >= planProd.getPlannedQuantityKg())
-// .collect(Collectors.toList());
-
-// if (!equiposCompatibles.isEmpty()) {
-// double cantidadRestante = planProd.getPlannedQuantityKg();
-
-// for (Equipo equipo : equiposCompatibles) {
-// double produccionDiaria = equipo.getMaxCapacidadLoteDia() *
-// planingClass.getTamañoMax() * equipo.getNumeroEquipos();
-// double produccionSemanal = equipo.getMaxCapacidadLoteSemana() *
-// planingClass.getTamañoMax() * equipo.getNumeroEquipos();
-
-// if (cantidadRestante <= produccionSemanal) {
-// int diasNecesarios = (int) Math.ceil(cantidadRestante / produccionDiaria);
-
-// // Verificar disponibilidad en los días requeridos
-// LocalDate fechaInicio =
-// planProd.getRequiredCompletionDate().minusDays(diasNecesarios);
-// boolean equipoDisponible = true;
-
-// for (int i = 0; i < diasNecesarios; i++) {
-// LocalDate dia = fechaInicio.plusDays(i);
-// if (equipo.isOcupado(dia)) {
-// equipoDisponible = false;
-// break;
-// }
-// }
-
-// if (equipoDisponible) {
-// planificacionOptima.add(planProd);
-
-// // Registrar la ocupación para los días necesarios
-// for (int i = 0; i < diasNecesarios; i++) {
-// equipo.setOcupado(fechaInicio.plusDays(i));
-// }
-// cantidadRestante = 0;
-// break;
-// } else {
-// System.out.println("Equipo no disponible para " + planProd.getItem() + " con
-// Batch_Status: " + planProd.getBatchStatus());
-// }
-// }
-// }
-
-// if (cantidadRestante > 0) {
-// if (planProd.getBatchStatus().equalsIgnoreCase("Pending")) {
-// System.out.println("No se pudo completar la planificación para " +
-// planProd.getItem() + " debido a la disponibilidad de los equipos.
-// Batch_Status: Pending");
-// } else {
-// System.out.println("Replanificando producción de menor prioridad para " +
-// planProd.getItem());
-// }
-// }
-// }
-// }
-// }
-// return planificacionOptima;
-// }
