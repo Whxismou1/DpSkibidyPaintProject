@@ -22,7 +22,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         primaryStage = stage;
-        setRoot("login");
+        setRoot("planificador");
         primaryStage.setTitle("PPG - Planificador Lotes");
 
         primaryStage.setResizable(true);

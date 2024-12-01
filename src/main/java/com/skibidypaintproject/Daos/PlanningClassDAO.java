@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.skibidypaintproject.Entities.SpecialClasses;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -69,5 +71,28 @@ public class PlanningClassDAO {
         }
         logger.info("Planng classes obtenidas correctamente de la base de datos");
         return planingClasses;
+    }
+
+    public List<SpecialClasses> obtenerSpecialClasses() {
+        List<SpecialClasses> specialClasses = new ArrayList<>();
+        String query = "SELECT * FROM special_classes";
+        try (Statement stmt = connection.createStatement();
+                ResultSet rs = stmt.executeQuery(query)) {
+
+            while (rs.next()) {
+                SpecialClasses specialClass = new SpecialClasses();
+                specialClass.setId(rs.getInt("id"));
+                specialClass.setItemCode(rs.getString("item_code"));
+                specialClass.setTamanoMax(rs.getInt("tamano_max"));
+                specialClass.setEquipo(rs.getString("equipo"));
+                specialClass.setStandar(rs.getInt("standar"));
+                specialClasses.add(specialClass);
+            }
+        } catch (Exception e) {
+            logger.warn("Error obteniendo las special classes de la base de datos");
+            e.printStackTrace();
+        }
+        logger.info("Special classes obtenidas correctamente de la base de datos");
+        return specialClasses;
     }
 }

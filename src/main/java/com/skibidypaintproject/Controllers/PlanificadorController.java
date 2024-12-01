@@ -11,6 +11,7 @@ import com.skibidypaintproject.Daos.PlanningClassDAO;
 import com.skibidypaintproject.Entities.Equipo;
 import com.skibidypaintproject.Entities.PlanProd;
 import com.skibidypaintproject.Entities.PlaningClass;
+import com.skibidypaintproject.Entities.SpecialClasses;
 import com.skibidypaintproject.Utils.AlertUtil;
 import java.util.List;
 import java.util.Optional;
@@ -55,6 +56,8 @@ public class PlanificadorController {
 
     private List<PlaningClass> listaPlaningClasses = new ArrayList<PlaningClass>();
 
+    private List<SpecialClasses> listaSpecialClasses = new ArrayList<SpecialClasses>();
+
     @FXML
     private void logOut() throws Throwable{
         logger.info("Logging out");
@@ -97,6 +100,7 @@ public class PlanificadorController {
             listaEquipos = pcDAO.obtenerEquipos();
             logger.info("Equipments read correctly: " + listaEquipos.size());
             listaPlaningClasses = pcDAO.obtenerPlaningClasses();
+            listaSpecialClasses = pcDAO.obtenerSpecialClasses();
 
 
             for (PlaningClass pc : listaPlaningClasses) {
@@ -112,7 +116,7 @@ public class PlanificadorController {
             logger.info("Starting optimal planning generation");
             System.out.println("Generando planificación óptima...");
             List<PlanProd> planificacionOptima = generarMejorPlanificacion(plan,
-                    listaPlaningClasses, listaEquipos);
+                    listaPlaningClasses, listaEquipos, listaSpecialClasses);
             logger.info("Optimal planning generated: " + planificacionOptima.size());
 
             logger.info("Starting to write the optimal planning to the excel file");
@@ -163,7 +167,7 @@ public class PlanificadorController {
 
 
     public List<PlanProd> generarMejorPlanificacion(List<PlanProd> planificaciones, List<PlaningClass> planingClasses,
-            List<Equipo> equipos) {
+            List<Equipo> equipos, List<SpecialClasses> specialClasses) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         int margen=margenPicker.getValue();
@@ -194,24 +198,44 @@ public class PlanificadorController {
             // Determinar la tecnología del equipo a partir del Routing_Code
             String typeMaterial = planProdActual.getRoutingCode().endsWith("C") ? "Opaco" : "Metalico";
 
-            List<Equipo> equiposCompatibles = equiposPreproces.stream()
-                    .filter(eq -> {
-                        Optional<PlaningClass> planningClassOpt = planingClasses.stream()
-                                .filter(pc -> pc.getPlaningClass().equals(planningClassActual) &&
-                                        pc.getPlanta().equals(plantaActual) &&
-                                        pc.getTecnologia().equals(typeMaterial))
-                                .findFirst();
-                        return planningClassOpt.isPresent()
-                                && planningClassOpt.get().getEquipo().equals(eq.getEtiquetasDeFila());
-                    }).collect(Collectors.toList());
-
+            List <Equipo> equiposCompatibles = new ArrayList<Equipo>();
+            //Compruebo si el item pertenece a una clase especial
+            if (listaSpecialClasses.stream().anyMatch(sc -> sc.getItemCode().equals(planProdActual.getItem()))) {
+                equiposCompatibles = equiposPreproces.stream()
+                        .filter(eq -> {
+                            Optional<SpecialClasses> specialClassOpt = specialClasses.stream()
+                                    .filter(sc -> sc.getItemCode().equals(planProdActual.getItem()))
+                                    .findFirst();
+                            return specialClassOpt.isPresent() && specialClassOpt.get().getEquipo().equals(eq.getEtiquetasDeFila());
+                        }).collect(Collectors.toList());
+            }
+            else {
+                equiposCompatibles = equiposPreproces.stream()
+                        .filter(eq -> {
+                            Optional<PlaningClass> planningClassOpt = planingClasses.stream()
+                                    .filter(pc -> pc.getPlaningClass().equals(planningClassActual) &&
+                                            pc.getPlanta().equals(plantaActual) &&
+                                            pc.getTecnologia().equals(typeMaterial))
+                                    .findFirst();
+                            return planningClassOpt.isPresent()
+                                    && planningClassOpt.get().getEquipo().equals(eq.getEtiquetasDeFila());
+                        }).collect(Collectors.toList());
+            }
             for (Equipo equipoActual : equiposCompatibles) {
-                int tamanioMax = planingClasses.stream()
-                        .filter(pc -> pc.getPlaningClass().equals(planningClassActual) &&
-                                pc.getPlanta().equals(plantaActual) &&
-                                pc.getTecnologia().equals(typeMaterial) &&
-                                pc.getEquipo().equals(equipoActual.getEtiquetasDeFila()))
-                        .findFirst().get().getTamanoMax();
+                int tamanioMax=0;
+                if (listaSpecialClasses.stream().anyMatch(sc -> sc.getItemCode().equals(planProdActual.getItem()))){
+                    tamanioMax= specialClasses.stream()
+                            .filter(sc -> sc.getItemCode().equals(planProdActual.getItem()))
+                            .findFirst().get().getTamanoMax();
+                }
+                else {
+                    tamanioMax = planingClasses.stream()
+                            .filter(pc -> pc.getPlaningClass().equals(planningClassActual) &&
+                                    pc.getPlanta().equals(plantaActual) &&
+                                    pc.getTecnologia().equals(typeMaterial) &&
+                                    pc.getEquipo().equals(equipoActual.getEtiquetasDeFila()))
+                            .findFirst().get().getTamanoMax();
+                }
 
                 int numLotesRequeridos = (int) Math.ceil((double) cantidadKgProd / tamanioMax);
 
