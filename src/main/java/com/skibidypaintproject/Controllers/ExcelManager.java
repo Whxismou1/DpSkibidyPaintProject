@@ -1,6 +1,7 @@
 package com.skibidypaintproject.Controllers;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -35,10 +36,29 @@ import com.skibidypaintproject.Entities.EquiposAsignPorCriterio;
 import com.skibidypaintproject.Entities.EquiposCapacidad;
 import com.skibidypaintproject.Entities.PlanProd;
 
+/**
+ * Clase para gestionar operaciones relacionadas con la lectura y escritura de
+ * archivos Excel.
+ * Utiliza Apache POI para trabajar con archivos Excel (.xlsx).
+ *
+ * @author Maxim
+ * @version 1.0
+ * @since 2024-12-03
+ */
 public class ExcelManager {
 
     Logger logger = LogManager.getLogger(ExcelManager.class);
 
+    /**
+     * Lee datos del archivo Excel y los mapea a una lista de objetos PlanProd.
+     *
+     * @param path Ruta del archivo Excel.
+     * @return Lista de objetos PlanProd leídos del archivo.
+     * @throws IOException           Si ocurre un error al leer o procesar el
+     *                               archivo Excel.
+     * @throws FileNotFoundException Si el archivo no se encuentra.
+     * @see PlanProd
+     */
     public List<PlanProd> readExcelPlanProd(String path) {
         FileInputStream f = null;
         XSSFWorkbook libro = null;
@@ -96,6 +116,17 @@ public class ExcelManager {
         return entradasExcel;
     }
 
+    /**
+     * Lee datos del archivo Excel y los mapea a una lista de objetos
+     * EquiposAsignPorCriterio.
+     *
+     * @param filePath Ruta del archivo Excel.
+     * @return Lista de objetos EquiposAsignPorCriterio leídos del archivo.
+     * @throws IOException           Si ocurre un error al leer o procesar el
+     *                               archivo Excel.
+     * @throws FileNotFoundException Si el archivo no se encuentra.
+     * @see EquiposAsignPorCriterio
+     */
     public List<EquiposAsignPorCriterio> readExcelEquiposAsignPorCriterio(String filePath) {
         FileInputStream f = null;
         XSSFWorkbook libro = null;
@@ -153,6 +184,17 @@ public class ExcelManager {
         return entradasExcel;
     }
 
+    /**
+     * Lee datos del archivo Excel y los mapea a una lista de objetos
+     * EquiposCapacidad.
+     *
+     * @param filePath Ruta del archivo Excel.
+     * @return Lista de objetos EquiposCapacidad leídos del archivo.
+     * @throws IOException           Si ocurre un error al leer o procesar el
+     *                               archivo Excel.
+     * @throws FileNotFoundException Si el archivo no se encuentra.
+     * @see EquiposCapacidad
+     */
     public List<EquiposCapacidad> readExcelEquiposCapacidad(String filePath) {
         FileInputStream f = null;
         XSSFWorkbook libro = null;
@@ -210,6 +252,13 @@ public class ExcelManager {
         return entradasExcel;
     }
 
+    /**
+     * Obtiene el valor de una celda en formato String, manejando diferentes tipos
+     * de datos.
+     *
+     * @param celda Celda a procesar.
+     * @return Valor de la celda en formato String, o null si está vacía.
+     */
     private String getCellValue(Cell celda) {
         if (celda == null) {
             return null;
@@ -235,6 +284,14 @@ public class ExcelManager {
 
     }
 
+    /**
+     * Asigna valores a un objeto PlanProd según el nombre de columna y la celda
+     * correspondiente.
+     *
+     * @param planProd      Objeto PlanProd a rellenar.
+     * @param nombreColumna Nombre de la columna.
+     * @param celda         Celda con el valor.
+     */
     private void asignarValorPlanProd(PlanProd planProd, String nombreColumna, Cell celda) {
         switch (nombreColumna) {
             case "PPG_Planning_Class":
@@ -409,6 +466,14 @@ public class ExcelManager {
         }
     }
 
+    /**
+     * Asigna valores a un objeto EquiposAsignPorCriterio según el nombre de columna
+     * y la celda correspondiente.
+     *
+     * @param equipos       Objeto EquiposAsignPorCriterio a rellenar.
+     * @param nombreColumna Nombre de la columna.
+     * @param celda         Celda con el valor.
+     */
     private void asignarValorEquiposAsignPorCriterio(EquiposAsignPorCriterio equipos, String nombreColumna,
             Cell celda) {
         switch (nombreColumna) {
@@ -439,6 +504,14 @@ public class ExcelManager {
         }
     }
 
+    /**
+     * Asigna valores a un objeto EquiposCapacidad según el nombre de columna y la
+     * celda correspondiente.
+     *
+     * @param equipos       Objeto EquiposCapacidad a rellenar.
+     * @param nombreColumna Nombre de la columna.
+     * @param celda         Celda con el valor.
+     */
     private void asignarValorEquiposCapacidad(EquiposCapacidad equipos, String nombreColumna, Cell celda) {
         switch (nombreColumna) {
             case "Etiquetas de fila":
@@ -459,6 +532,13 @@ public class ExcelManager {
         }
     }
 
+    /**
+     * Escribe una lista de objetos PlanProd en un archivo Excel.
+     *
+     * @param listaPlanProd Lista de objetos PlanProd.
+     * @param workbook      Objeto Workbook donde escribir los datos.
+     * @see PlanProd
+     */
     public void writeExcel(List<PlanProd> listaPlanProd, Workbook workbook) {
         Sheet sheet = workbook.createSheet("Mejor Planificacion");
         String[] encabezados = {
@@ -509,11 +589,20 @@ public class ExcelManager {
         }
     }
 
+    /**
+     * Genera una vista tipo Gantt en un archivo Excel a partir de una lista de
+     * objetos PlanProd.
+     *
+     * @param listaPlanProd Lista de objetos PlanProd.
+     * @param libro         Objeto Workbook donde generar la vista.
+     * @see PlanProd
+     */
     public void ganttExcel(List<PlanProd> listaPlanProd, Workbook libro) {
         Sheet hoja = libro.createSheet("Gantt");
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        listaPlanProd.sort((t1, t2) -> LocalDate.parse(t1.getBxStart(), formatter).compareTo(LocalDate.parse(t2.getBxStart(), formatter)));
+        listaPlanProd.sort((t1, t2) -> LocalDate.parse(t1.getBxStart(), formatter)
+                .compareTo(LocalDate.parse(t2.getBxStart(), formatter)));
 
         Set<LocalDate> fechas = listaPlanProd.stream()
                 .flatMap(t -> List
@@ -569,6 +658,13 @@ public class ExcelManager {
         }
     }
 
+    /**
+     * Guarda un archivo Excel en una ubicación específica.
+     *
+     * @param workbook Objeto Workbook a guardar.
+     * @param filePath Ruta donde se guardará el archivo.
+     * @throws IOException Si ocurre un error al guardar el archivo Excel.
+     */
     public void saveWorkbook(Workbook workbook, String filePath) {
         try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
             workbook.write(fileOut);
