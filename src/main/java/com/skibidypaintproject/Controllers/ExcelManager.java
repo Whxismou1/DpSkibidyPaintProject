@@ -24,6 +24,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -640,6 +641,7 @@ public class ExcelManager {
             XSSFColor color = new XSSFColor(new byte[] { red, green, blue }, null);
             ((XSSFCellStyle) estiloDuracion).setFillForegroundColor(color);
             estiloDuracion.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            estiloDuracion.setAlignment(HorizontalAlignment.LEFT);
 
             // Convertir bxStart y bxEnd a LocalDate
             LocalDate fechaInicioTarea = LocalDate.parse(tarea.getBxStart(), formatter);
@@ -653,6 +655,9 @@ public class ExcelManager {
             // Rellenar la barra de duración en el rango de fechas exactas
             for (int i = indiceInicio; i <= indiceFin; i++) {
                 Cell celdaDuracion = fila.createCell(i);
+                if (i == indiceInicio) {
+                    celdaDuracion.setCellValue(tarea.getId());
+                }
                 celdaDuracion.setCellStyle(estiloDuracion);
             }
         }
