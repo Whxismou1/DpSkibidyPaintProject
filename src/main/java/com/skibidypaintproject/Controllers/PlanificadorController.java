@@ -34,6 +34,9 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextArea;
 
+/**
+ * Clase controladora de la vista y de la planificación
+ */
 public class PlanificadorController {
     @FXML
     private Button ArchivoOrigenButton;
@@ -58,20 +61,29 @@ public class PlanificadorController {
 
     private List<SpecialClasses> listaSpecialClasses = new ArrayList<SpecialClasses>();
 
+    /**
+     * Metodo encargado del cierre de sesion
+     * 
+     * @throws Throwable Excepcion lanzada en caso de error
+     */
     @FXML
-    private void logOut() throws Throwable{
+    private void logOut() throws Throwable {
         logger.info("Logging out");
         App.setRoot("login");
     }
 
+    /**
+     * Metodo encargado de inicializar el spinner de los dias de margen
+     */
     @FXML
     public void initialize() {
-        // Configura el Spinner con un rango y un valor por defecto
         SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 30, 0);
         margenPicker.setValueFactory(valueFactory);
     }
 
-
+    /**
+     * Metodo encargado de seleccionar el archivo origen
+     */
     @FXML
     private void selectArchivoOrigen() {
         FileChooser fileChooser = new FileChooser();
@@ -91,6 +103,10 @@ public class PlanificadorController {
         }
     }
 
+    /**
+     * Metodo principal encargado de la planificacion optima y generacion del
+     * archivo excel
+     */
     @FXML
     private void planificar() {
         if (archivoOrigen != null) {
@@ -101,7 +117,6 @@ public class PlanificadorController {
             logger.info("Equipments read correctly: " + listaEquipos.size());
             listaPlaningClasses = pcDAO.obtenerPlaningClasses();
             listaSpecialClasses = pcDAO.obtenerSpecialClasses();
-
 
             for (PlaningClass pc : listaPlaningClasses) {
                 if (pc.getTecnologia() == null) {
@@ -128,15 +143,15 @@ public class PlanificadorController {
             logger.info("Optimal planning written to the excel file");
             System.out.println("Planificación óptima guardada");
             if (Desktop.isDesktopSupported()) {
-            Desktop desktop = Desktop.getDesktop();
-            try {
-                // Abre el archivo con la aplicación predeterminada
-                desktop.open(new File("src/main/resources/PlanificacionOptima.xlsx"));
-            } catch (IOException e) {
-                System.err.println("No se pudo abrir el archivo: " + e.getMessage());
+                Desktop desktop = Desktop.getDesktop();
+                try {
+                    // Abre el archivo con la aplicación predeterminada
+                    desktop.open(new File("src/main/resources/PlanificacionOptima.xlsx"));
+                } catch (IOException e) {
+                    System.err.println("No se pudo abrir el archivo: " + e.getMessage());
+                }
+
             }
-            
-        } 
 
             AlertUtil.showAlert("Éxito", "Planificación realizada", null);
         } else if (archivoOrigen == null) {
@@ -165,12 +180,20 @@ public class PlanificadorController {
         }
     }
 
-
-    public List<PlanProd> generarMejorPlanificacion(List<PlanProd> planificaciones, List<PlaningClass> planingClasses,
+    /**
+     * Metodo encargado de generar la planificacion optima
+     * 
+     * @param planificaciones Lista de planificaciones
+     * @param planingClasses  Lista de planningClasses
+     * @param equipos         Lista de equipos disponibles
+     * @param specialClasses  Lista de clases especiales
+     * @return Lista de planificaciones optimas
+     */
+    private List<PlanProd> generarMejorPlanificacion(List<PlanProd> planificaciones, List<PlaningClass> planingClasses,
             List<Equipo> equipos, List<SpecialClasses> specialClasses) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        int margen=margenPicker.getValue();
+        int margen = margenPicker.getValue();
         // Se preprocesan los equipos para tener una lista con la cantidad de
         // equipos reales
         List<Equipo> equiposPreproces = new ArrayList<>();
@@ -198,18 +221,18 @@ public class PlanificadorController {
             // Determinar la tecnología del equipo a partir del Routing_Code
             String typeMaterial = planProdActual.getRoutingCode().endsWith("C") ? "Opaco" : "Metalico";
 
-            List <Equipo> equiposCompatibles = new ArrayList<Equipo>();
-            //Compruebo si el item pertenece a una clase especial
+            List<Equipo> equiposCompatibles = new ArrayList<Equipo>();
+            // Compruebo si el item pertenece a una clase especial
             if (listaSpecialClasses.stream().anyMatch(sc -> sc.getItemCode().equals(planProdActual.getItem()))) {
                 equiposCompatibles = equiposPreproces.stream()
                         .filter(eq -> {
                             Optional<SpecialClasses> specialClassOpt = specialClasses.stream()
                                     .filter(sc -> sc.getItemCode().equals(planProdActual.getItem()))
                                     .findFirst();
-                            return specialClassOpt.isPresent() && specialClassOpt.get().getEquipo().equals(eq.getEtiquetasDeFila());
+                            return specialClassOpt.isPresent()
+                                    && specialClassOpt.get().getEquipo().equals(eq.getEtiquetasDeFila());
                         }).collect(Collectors.toList());
-            }
-            else {
+            } else {
                 equiposCompatibles = equiposPreproces.stream()
                         .filter(eq -> {
                             Optional<PlaningClass> planningClassOpt = planingClasses.stream()
@@ -222,13 +245,12 @@ public class PlanificadorController {
                         }).collect(Collectors.toList());
             }
             for (Equipo equipoActual : equiposCompatibles) {
-                int tamanioMax=0;
-                if (listaSpecialClasses.stream().anyMatch(sc -> sc.getItemCode().equals(planProdActual.getItem()))){
-                    tamanioMax= specialClasses.stream()
+                int tamanioMax = 0;
+                if (listaSpecialClasses.stream().anyMatch(sc -> sc.getItemCode().equals(planProdActual.getItem()))) {
+                    tamanioMax = specialClasses.stream()
                             .filter(sc -> sc.getItemCode().equals(planProdActual.getItem()))
                             .findFirst().get().getTamanoMax();
-                }
-                else {
+                } else {
                     tamanioMax = planingClasses.stream()
                             .filter(pc -> pc.getPlaningClass().equals(planningClassActual) &&
                                     pc.getPlanta().equals(plantaActual) &&
@@ -246,14 +268,15 @@ public class PlanificadorController {
                 int semanasNecesarias = (int) Math.ceil(numLotesRequeridos / capacidadLotSemana);
 
                 LocalDate fechaInicio = LocalDate.parse(planProdActual.getRequiredCompletionDate(), formatter)
-                        .minusDays(diasNecesarios+margen);
+                        .minusDays(diasNecesarios + margen);
                 LocalDate fechaFin = fechaInicio.plusDays(diasNecesarios);
                 boolean equipoDisponible = true;
 
                 Intervalo nuevoIntervalo = new Intervalo(fechaInicio, fechaFin);
                 List<Intervalo> intervalosOcupados = ocupacionEquipos.getOrDefault(equipoActual, new ArrayList<>());
 
-                boolean seSolapa = intervalosOcupados.stream().anyMatch(intervalo -> intervalo.seSolapa(nuevoIntervalo));
+                boolean seSolapa = intervalosOcupados.stream()
+                        .anyMatch(intervalo -> intervalo.seSolapa(nuevoIntervalo));
 
                 if (!seSolapa) {
                     intervalosOcupados.add(nuevoIntervalo);
@@ -273,9 +296,15 @@ public class PlanificadorController {
         return planificacionOptima;
     }
 
+    /**
+     * Metodo encargado de imprimir la planificacion
+     * 
+     * @param planificacion Lista de planificaciones
+     */
     private void printPlanificacion(List<PlanProd> planificacion) {
         for (PlanProd plan : planificacion) {
-            AreaElems.appendText("Batch ID: " + plan.getBxRef()+ " Fecha de inicio: " + plan.getBxStart() + " Fecha de fin: " + plan.getBxEnd() + "\n");
+            AreaElems.appendText("Batch ID: " + plan.getBxRef() + " Fecha de inicio: " + plan.getBxStart()
+                    + " Fecha de fin: " + plan.getBxEnd() + "\n");
         }
     }
 

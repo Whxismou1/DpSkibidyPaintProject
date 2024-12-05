@@ -17,7 +17,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import com.skibidypaintproject.Entities.SpecialClasses;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
@@ -41,10 +40,6 @@ import com.skibidypaintproject.Entities.PlanProd;
  * Clase para gestionar operaciones relacionadas con la lectura y escritura de
  * archivos Excel.
  * Utiliza Apache POI para trabajar con archivos Excel (.xlsx).
- *
- * @author Maxim
- * @version 1.0
- * @since 2024-12-03
  */
 public class ExcelManager {
 

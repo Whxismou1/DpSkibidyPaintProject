@@ -15,6 +15,10 @@ import com.skibidypaintproject.Daos.UserDAO;
 import com.skibidypaintproject.Entities.User;
 import com.skibidypaintproject.Utils.AlertUtil;
 
+/**
+ * Clase encargada de manejar la lógica de la vista de login
+ */
+
 public class LoginController {
 
     private static final Logger logger = LogManager.getLogger(LoginController.class);
@@ -25,12 +29,22 @@ public class LoginController {
 
     private UserDAO userDAO = new UserDAO();
 
+
+
+    /**
+     * Método que se encarga de cambiar la vista a la de registro
+     * @throws IOException Excepción en caso de que no se pueda cambiar la vista
+     */
     @FXML
     private void switchToRegister() throws IOException {
         logger.info("Switching to register page");
         App.setRoot("register");
     }
 
+    /**
+     * Método que se encarga de realizar el login de un usuario
+     * @throws IOException Excepción en caso de que no se pueda realizar el login
+     */
     @FXML
     private void login() throws IOException {
         String username = usernameTextInput.getText();

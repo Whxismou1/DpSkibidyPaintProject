@@ -16,6 +16,9 @@ import com.skibidypaintproject.Entities.User;
 import com.skibidypaintproject.Utils.AlertUtil;
 import com.skibidypaintproject.Utils.PasswordValidator;
 
+/**
+ * Clase encargada de manejar la lógica de la vista de registro
+ */
 public class RegisterController {
 
     @FXML
@@ -30,12 +33,22 @@ public class RegisterController {
 
     private static final Logger logger = LogManager.getLogger(RegisterController.class);
 
+    /**
+     * Método que se encarga de cambiar la vista a la de login
+     * 
+     * @throws IOException Excepción en caso de que no se pueda cambiar la vista
+     */
     @FXML
     private void backToLogin() throws IOException {
         logger.info("Switching to login page");
         App.setRoot("login");
     }
 
+    /**
+     * Método que se encarga de registrar un usuario
+     * 
+     * @throws IOException Excepción en caso de que no se pueda registrar el usuario
+     */
     @FXML
     private void register() throws IOException {
         String username = usernameTextInput.getText();
@@ -58,6 +71,12 @@ public class RegisterController {
             return;
         }
 
+        if (userDAO.getUserByUsername(username) != null) {
+            AlertUtil.showAlert("Error", "El usuario ya existe", actualWIndow);
+            logger.warn("Wrong credentials, user already exists");
+            return;
+        }
+
         User newUser = new User(username, password);
 
         if (newUser != null && userDAO.insertUser(newUser)) {
@@ -70,6 +89,5 @@ public class RegisterController {
         }
 
     }
-    
 
 }
