@@ -269,7 +269,14 @@ public class PlanificadorController {
             }
         }
         logger.info("Planificación óptima generada");
+        printPlanificacion(planificacionOptima);
         return planificacionOptima;
+    }
+
+    private void printPlanificacion(List<PlanProd> planificacion) {
+        for (PlanProd plan : planificacion) {
+            AreaElems.appendText("Batch ID: " + plan.getBxRef()+ " Fecha de inicio: " + plan.getBxStart() + " Fecha de fin: " + plan.getBxEnd() + "\n");
+        }
     }
 
 }

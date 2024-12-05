@@ -26,7 +26,7 @@
          <Spinner id="margenPicker" fx:id="margenPicker"  />
       
          <Button fx:id="PLanificadorButton" mnemonicParsing="false" onAction="#planificar"
-            text="Futuro Planificador" />
+            text="Generar Planificacion" />
          <TextArea fx:id="AreaElems" editable="false" prefHeight="200.0" prefWidth="410.0" />
       </VBox>
    </children>
