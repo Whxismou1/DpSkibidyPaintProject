@@ -1,4 +1,4 @@
-package com.skibidypaintproject.Controllers;
+package com.g1planificadorpgg.Controllers;
 
 import java.io.IOException;
 
@@ -10,11 +10,11 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Window;
 
-import com.skibidypaintproject.App;
-import com.skibidypaintproject.Daos.UserDAO;
-import com.skibidypaintproject.Entities.User;
-import com.skibidypaintproject.Utils.AlertUtil;
-import com.skibidypaintproject.Utils.PasswordValidator;
+import com.g1planificadorpgg.App;
+import com.g1planificadorpgg.Daos.UserDAO;
+import com.g1planificadorpgg.Entities.User;
+import com.g1planificadorpgg.Utils.AlertUtil;
+import com.g1planificadorpgg.Utils.PasswordValidator;
 
 /**
  * Clase encargada de manejar la lógica de la vista de registro

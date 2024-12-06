@@ -1,4 +1,4 @@
-package com.skibidypaintproject.Utils;
+package com.g1planificadorpgg.Utils;
 
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;

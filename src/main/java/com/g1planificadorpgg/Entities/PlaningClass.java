@@ -1,4 +1,4 @@
-package com.skibidypaintproject.Entities;
+package com.g1planificadorpgg.Entities;
 
 // CREATE TABLE IF NOT EXISTS planning_classes (
 //     id INT AUTO_INCREMENT PRIMARY KEY,

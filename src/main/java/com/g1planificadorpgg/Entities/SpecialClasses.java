@@ -1,4 +1,4 @@
-package com.skibidypaintproject.Entities;
+package com.g1planificadorpgg.Entities;
 
 public class SpecialClasses {
 

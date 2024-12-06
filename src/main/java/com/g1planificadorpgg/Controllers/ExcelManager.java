@@ -1,4 +1,4 @@
-package com.skibidypaintproject.Controllers;
+package com.g1planificadorpgg.Controllers;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -32,9 +32,9 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.skibidypaintproject.Entities.EquiposAsignPorCriterio;
-import com.skibidypaintproject.Entities.EquiposCapacidad;
-import com.skibidypaintproject.Entities.PlanProd;
+import com.g1planificadorpgg.Entities.EquiposAsignPorCriterio;
+import com.g1planificadorpgg.Entities.EquiposCapacidad;
+import com.g1planificadorpgg.Entities.PlanProd;
 
 /**
  * Clase para gestionar operaciones relacionadas con la lectura y escritura de

@@ -2,8 +2,8 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.skibidypaintproject</groupId>
-    <artifactId>skibidypaintproject</artifactId>
+    <groupId>com.g1planificadorpgg</groupId>
+    <artifactId>g1planificadorpgg</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
     <properties>
@@ -81,8 +81,8 @@
     <build>
         <resources>
             <resource>
-                <directory>src/main/java/com/skibidypaintproject/Views</directory>
-                <targetPath>com/skibidypaintproject/Views</targetPath>
+                <directory>src/main/java/com/g1planificadorpgg/Views</directory>
+                <targetPath>com/g1planificadorpgg/Views</targetPath>
                 <includes>
                     <include>**/*.fxml</include>
                     <include>**/*.properties</include>
@@ -99,8 +99,8 @@
                 </includes>
             </resource>
             <resource>
-                <directory>src/main/java/com/skibidypaintproject/Resources</directory>
-                <targetPath>com/skibidypaintproject/Resources</targetPath>
+                <directory>src/main/java/com/g1planificadorpgg/Resources</directory>
+                <targetPath>com/g1planificadorpgg/Resources</targetPath>
                 <includes>
                     <include>**/*.png</include>
                     <include>**/*.mp4</include>
@@ -115,7 +115,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.skibidypaintproject.Main</mainClass>
+                            <mainClass>com.g1planificadorpgg.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -130,7 +130,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>com.skibidypaintproject.Main</mainClass>
+                            <mainClass>com.g1planificadorpgg.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

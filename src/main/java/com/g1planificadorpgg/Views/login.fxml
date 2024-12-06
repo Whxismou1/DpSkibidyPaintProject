@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <StackPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
-    fx:controller="com.skibidypaintproject.Controllers.LoginController"
+    fx:controller="com.g1planificadorpgg.Controllers.LoginController"
     stylesheets="@CSS/login.css">
     <children>
         <VBox alignment="CENTER" spacing="10" styleClass="container">

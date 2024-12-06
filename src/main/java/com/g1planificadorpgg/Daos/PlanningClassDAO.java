@@ -1,4 +1,4 @@
-package com.skibidypaintproject.Daos;
+package com.g1planificadorpgg.Daos;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -7,13 +7,13 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.skibidypaintproject.Entities.SpecialClasses;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.skibidypaintproject.Controllers.BBDDController;
-import com.skibidypaintproject.Entities.Equipo;
-import com.skibidypaintproject.Entities.PlaningClass;
+import com.g1planificadorpgg.Controllers.BBDDController;
+import com.g1planificadorpgg.Entities.Equipo;
+import com.g1planificadorpgg.Entities.PlaningClass;
+import com.g1planificadorpgg.Entities.SpecialClasses;
 
 public class PlanningClassDAO {
 

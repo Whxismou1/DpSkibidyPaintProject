@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="info" name="Skibidyy" packages="com.skibidypaintproject">
+<Configuration status="info" name="Skibidyy" packages="com.g1planificadorpgg">
     <Appenders>
         <File name="FileLogger" fileName="./src/main/resources/log.txt" append="true">
             <PatternLayout>

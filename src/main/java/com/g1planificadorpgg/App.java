@@ -1,4 +1,4 @@
-package com.skibidypaintproject;
+package com.g1planificadorpgg;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -41,7 +41,7 @@ public class App extends Application {
     public static void setRoot(String fxml) throws IOException {
         logger.info("Loading page: " + fxml);
         FXMLLoader fxmlLoader = new FXMLLoader(
-                App.class.getResource("/com/skibidypaintproject/Views/" + fxml + ".fxml"));
+                App.class.getResource("/com/g1planificadorpgg/Views/" + fxml + ".fxml"));
         Parent root = fxmlLoader.load();
         primaryStage.setScene(new Scene(root));
     }

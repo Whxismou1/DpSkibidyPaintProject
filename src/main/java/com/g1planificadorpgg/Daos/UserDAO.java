@@ -1,7 +1,8 @@
-package com.skibidypaintproject.Daos;
+package com.g1planificadorpgg.Daos;
 
-import com.skibidypaintproject.Controllers.BBDDController;
-import com.skibidypaintproject.Entities.User;
+import com.g1planificadorpgg.Controllers.BBDDController;
+import com.g1planificadorpgg.Entities.User;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

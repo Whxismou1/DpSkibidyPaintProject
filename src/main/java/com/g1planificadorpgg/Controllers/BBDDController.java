@@ -1,4 +1,4 @@
-package com.skibidypaintproject.Controllers;
+package com.g1planificadorpgg.Controllers;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import java.sql.Connection;

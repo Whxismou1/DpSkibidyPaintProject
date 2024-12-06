@@ -1,4 +1,4 @@
-package com.skibidypaintproject.Controllers;
+package com.g1planificadorpgg.Controllers;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,13 +6,13 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.awt.Desktop;
 
-import com.skibidypaintproject.App;
-import com.skibidypaintproject.Daos.PlanningClassDAO;
-import com.skibidypaintproject.Entities.Equipo;
-import com.skibidypaintproject.Entities.PlanProd;
-import com.skibidypaintproject.Entities.PlaningClass;
-import com.skibidypaintproject.Entities.SpecialClasses;
-import com.skibidypaintproject.Utils.AlertUtil;
+import com.g1planificadorpgg.App;
+import com.g1planificadorpgg.Daos.PlanningClassDAO;
+import com.g1planificadorpgg.Entities.Equipo;
+import com.g1planificadorpgg.Entities.PlanProd;
+import com.g1planificadorpgg.Entities.PlaningClass;
+import com.g1planificadorpgg.Entities.SpecialClasses;
+import com.g1planificadorpgg.Utils.AlertUtil;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
