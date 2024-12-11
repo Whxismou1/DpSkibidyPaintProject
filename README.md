@@ -53,4 +53,10 @@ Este proyecto utiliza las siguientes tecnologías y bibliotecas:
    java -jar target/<NOMBRE_DEL_JAR>.jar
    ```
 
----
+## Contribuyentes
+
+- Cristian Álvarez Villán
+- Maxim Berchun
+- Francisco Fernández Ugidos
+- Álvaro Labanda Canal
+- Mouhcine El Oualidi Charchmi
